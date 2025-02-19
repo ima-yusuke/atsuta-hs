@@ -1,0 +1,58 @@
+.categorySwiper{
+    padding: 2% !important;
+}
+
+.category-slide {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* 立体感のある影 */
+    transition: transform 0.2s, box-shadow 0.2s; /* ホバー時のアニメーション */
+    background-color: #E9E9E9;
+}
+
+/*メニュー画像*/
+.categorySwiper .swiper-slide img {
+    width: 100% !important;
+    height: 40dvh;
+    object-fit: cover;
+}
+
+.category-slide p{
+    padding: 1%;
+}
+
+/* アニメーションを定義 */
+@keyframes zoomFadeOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(4); /* 画面いっぱいまで拡大 */
+    }
+}
+
+/* 画像にアニメーションを適用するクラス */
+.zoom-fade-out {
+    animation: zoomFadeOut 1.5s ease-out forwards; /* 1.5秒で拡大・フェードアウト */
+}
+
+@keyframes moveUpFadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0); /* Start at the original position */
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-60vh);
+    }
+}
+
+/* Class to apply to the <p> tag */
+.move-up-fade-out {
+    animation: moveUpFadeOut 1.5s ease-out forwards; /* Same duration as image animation */
+}

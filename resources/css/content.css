@@ -1,0 +1,27 @@
+@charset "UTF-8";
+.contentSwiper {
+  width: 100%; /* コンテナの幅を100%に設定 */
+  max-width: 99%; /* 必要に応じて調整 */
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: 2% !important;
+}
+
+.contentSwiper .swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #31313B;
+  /*width: 25% !important;*/
+}
+
+/*main.jsで使用*/
+.hideContainer {
+  display: none !important;
+}
+
+.thumbnail {
+  aspect-ratio: 16/9 !important; /* 16:9 の比率を指定 */
+}
+
+/*# sourceMappingURL=content.css.map */

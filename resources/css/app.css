@@ -1,3 +1,129 @@
+/*@import "bootstrap-icons/font/bootstrap-icons.css";*/
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    /*background-color: #E9E9E9;*/
+}
+
+#slide {
+    position: fixed;
+    top: 0;
+    left: -100%; /* 初期状態は画面外 */
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    transition: left 1s ease; /* スライドのアニメーション */
+    z-index: 1000;
+}
+
+/*全画面切替ボタン*/
+.btn{
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    position: relative;
+    display: inline-block;
+    padding: 0.5rem 2rem;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+    text-align: center;
+    vertical-align: middle;
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    color: #212529;
+    border-radius: 0.5rem;
+}
+
+a.btn-switch {
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 100vh;
+    background: #fbfbfc;
+    background: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        from(#fbfbfc),
+        to(#dcddde)
+    );
+    box-shadow: -1px -5px 6px rgba(0, 0, 0, 0.2), 3px 3px 5px white,
+    0 10px 10px rgba(0, 0, 0, 0.1), inset 0 -4px 5px rgba(0, 0, 0, 0.1);
+}
+
+a.btn-switch span {
+    display: inline-block;
+
+    -webkit-transition: all 0.3s;
+
+    transition: all 0.3s;
+}
+
+a.btn-switch:hover {
+    -webkit-box-shadow: -1px -5px 6px rgba(0, 0, 0, 0.2), 3px 3px 5px white,
+    0 10px 10px rgba(0, 0, 0, 0.1), inset 0 -4px 5px rgba(0, 0, 0, 0.1),
+    inset 0 3px 3px rgba(0, 0, 0, 0.18);
+    box-shadow: -1px -5px 6px rgba(0, 0, 0, 0.2), 3px 3px 5px white,
+    0 10px 10px rgba(0, 0, 0, 0.1), inset 0 -4px 5px rgba(0, 0, 0, 0.1),
+    inset 0 3px 3px rgba(0, 0, 0, 0.18);
+}
+
+a.btn-switch:hover span {
+    -webkit-transform: scale(0.96);
+    transform: scale(0.96);
+}
+
+/* btn-switch2 のスタイル */
+a.btn-switch2 {
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 100vh;
+    background: linear-gradient(to bottom, #ed7777, #d9534f);
+    box-shadow: -1px -5px 6px rgba(0, 0, 0, 0.2), 3px 3px 5px white,
+    0 10px 10px rgba(0, 0, 0, 0.1), inset 0 -4px 5px rgba(0, 0, 0, 0.1);
+}
+
+a.btn-switch2:hover {
+    box-shadow: -1px -5px 6px rgba(0, 0, 0, 0.2), 3px 3px 5px white,
+    0 10px 10px rgba(0, 0, 0, 0.1), inset 0 -4px 5px rgba(0, 0, 0, 0.1),
+    inset 0 3px 3px rgba(0, 0, 0, 0.18);
+    background: linear-gradient(to bottom, #e06464, #c64440); /* 押された感じの色合い */
+}
+
+a.btn-switch2 span {
+    display: inline-block;
+    transition: all 0.3s;
+}
+
+a.btn-switch2:hover span {
+    transform: scale(0.96);
+}
+
+@keyframes btnFadeOut {
+    0% {
+        opacity: 1;
+    }
+    99% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* 画像にアニメーションを適用するクラス */
+.btn-fade-out {
+    animation: btnFadeOut 1.5s ease-out forwards; /* 1.5秒で拡大・フェードアウト */
+}
+
+
