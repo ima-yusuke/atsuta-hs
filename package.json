@@ -16,6 +16,10 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "bootstrap-icons": "^1.11.3",
+        "flowbite": "^3.1.2",
+        "sass": "^1.85.0",
+        "sortablejs": "^1.15.6",
         "swiper": "^11.2.4"
     }
 }
