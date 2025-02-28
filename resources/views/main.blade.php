@@ -48,7 +48,7 @@
         {{--スライド--}}
         <div class="swiper categorySwiper">
             <div class="swiper-wrapper">
-                @foreach($categories as $value)
+                @foreach($categoryMenu as $value)
                     <x-category-slide :id="$value['id']" :name="$value['name']" :url="$value['img']"/>
                 @endforeach
             </div>
