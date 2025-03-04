@@ -15,6 +15,13 @@ class MainController extends Controller
 
         //サブカテゴリーとコンテンツ用のデータを取得
         $categories = Category::with('contents')->orderBy('order')->get();
-        return view('main',compact('categories','categoryMenu'));
+
+
+        $categories2 = Category::where('parent_id', 0)
+            ->with(['children', 'contents'])
+            ->orderBy('order')
+            ->get();
+
+        return view('main',compact('categories','categoryMenu','categories2'));
     }
 }
