@@ -18,6 +18,9 @@ const AnimationSlide = document.getElementById('slide');
 const ImgElement = AnimationContainer.querySelector("img");
 const TextElement = AnimationContainer.querySelector("p");
 
+// 現在の親カテゴリーid
+let currentParentId = null;
+
 // Initialize Swiper with configuration
 const categorySwiper = new Swiper('.categorySwiper', {
     effect: 'coverflow', // スライダーに「カバーフロー」効果を適用します。中央のスライドが拡大され、3D的に表現されます。
@@ -43,12 +46,14 @@ function initializeContentSwiper(className) {
             rows: 2, // 縦に並べる数
         },
         spaceBetween: 30, // 各スライド間のスペース
+        loop: false, // 順番が崩れないように
+
     });
 }
 
 let contentSwiper = initializeContentSwiper(".swiper-2");//デフォルト
 
-// カテゴリースライドをクリックしたときの処理
+// メニューのカテゴリースライドをクリックしたときの処理
 for (let i = 0; i < CategorySlide.length; i++) {
     CategorySlide[i].addEventListener("click", async function (e) {
         // クリックされたスライドのサイズと位置を取得
@@ -77,6 +82,13 @@ for (let i = 0; i < CategorySlide.length; i++) {
         ImgSizeChangeAnimation(slideRect,animImage,animText,img,text);
 
         await Sleep(1500); // 1.5秒待機
+
+
+        currentParentId = CategorySlide[i].getAttribute('data-id');
+
+        let idx = CategorySlide[i].getAttribute('data-id');
+        ShowNextView(idx);
+
         ShowContentContainer(animText); // コンテンツを表示
     });
 }
@@ -184,5 +196,41 @@ function HideContentVideos(container){
 }
 
 
+function ShowNextView(id) {
+    let categories = document.getElementsByClassName("parent_id_" + id);
+
+    for (let i = 0; i < categories.length; i++) {
+        categories[i].classList.remove("hidden"); // `hidden` を削除
+        categories[i].classList.remove("!hidden"); // 念のため `!hidden` も削除
+        categories[i].classList.add("swiper-slide");
+    }
+
+    if (!contentSwiper.destroyed) {
+        contentSwiper.destroy(true, true); // 破棄時にHTMLやCSSをリセット
+    }
+
+    contentSwiper = initializeContentSwiper(`.swiper-${currentParentId}`);
+}
 
 
+let subCategories = document.getElementsByClassName("sub-category");
+let subContents = document.getElementsByClassName("sub-content");
+
+for (let i = 0; i < subCategories.length; i++) {
+    subCategories[i].addEventListener("click", function (e) {
+        let id = subCategories[i].getAttribute('data-id');
+        // すべての `sub-content` を非表示
+        for (let j = 0; j < subContents.length; j++) {
+            subContents[j].classList.add("!hidden"); // `hidden` を追加
+            subContents[j].classList.remove("swiper-slide");
+        }
+
+        // すべての `sub-category` を非表示
+        for (let j = 0; j < subCategories.length; j++) {
+            subCategories[j].classList.add("!hidden");
+            subCategories[j].classList.remove("swiper-slide"); // 念のため `!hidde
+        }
+
+        ShowNextView(id);
+    });
+}
