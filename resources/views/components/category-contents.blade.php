@@ -1,6 +1,6 @@
 {{--子カテゴリ--}}
 @foreach($categories as $category)
-    <div data-id="{{$category["id"]}}" class="parent_id_{{$parent_id}} swiper-slide !hidden sub-category video-container relative overflow-hidden">
+    <div data-id="{{$category["id"]}}" class="parent_id_{{$parent_id}} swiper-slide !hidden sub-category video-container relative overflow-hidden">--}}
         <img
             src="{{ asset($category['img'])}}"
             alt="Video Thumbnail"

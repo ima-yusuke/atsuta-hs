@@ -9,8 +9,12 @@ const CategorySlide = document.getElementsByClassName("category-slide");
 // コンテンツ
 const ContentsContainer = document.getElementById("contents_container");
 const CategoryTitle = document.getElementById("category");
-const CloseContentsBtn = document.getElementById("close_contents_btn");
+const BackBtn = document.getElementById("close_contents_btn");
+const TopBtn = document.getElementById("back_top_btn");
+const SubNoContentsText = document.getElementById("sub_no_contents_text");
 let currentContainer = null;
+let subCategories = document.getElementsByClassName("sub-category");
+let subContents = document.getElementsByClassName("sub-content");
 
 // 遷移アニメーション
 const AnimationContainer = document.getElementById("animation_container");
@@ -20,8 +24,9 @@ const TextElement = AnimationContainer.querySelector("p");
 
 // 現在の親カテゴリーid
 let currentParentId = null;
+let subCategoryIdArray = [];
 
-// Initialize Swiper with configuration
+// 親カテゴリースライドのSwiper
 const categorySwiper = new Swiper('.categorySwiper', {
     effect: 'coverflow', // スライダーに「カバーフロー」効果を適用します。中央のスライドが拡大され、3D的に表現されます。
     grabCursor: true,    // スライダー上でマウスカーソルが「掴む」形状になるように設定し、直感的なインターフェイスを提供します。
@@ -37,7 +42,7 @@ const categorySwiper = new Swiper('.categorySwiper', {
     },
 });
 
-// 各学部Swiperの初期化を関数化
+// サブカテゴリーとコンテンツSwiperの初期化を関数化
 function initializeContentSwiper(className) {
     return new Swiper(className, {
         slidesPerView: 3, // 1行に表示するスライド数
@@ -53,48 +58,81 @@ function initializeContentSwiper(className) {
 
 let contentSwiper = initializeContentSwiper(".swiper-2");//デフォルト
 
+function MoveSlideToCenter(clickedIdx) {
+
+    // 現在表示しているスライド3枚を取得
+    const activeIndex = document.getElementsByClassName("swiper-slide-visible")
+
+    let activeIndexArray = [];
+
+    for (let i = 0; i < activeIndex.length; i++) {
+        activeIndexArray.push(activeIndex[i].dataset.swiperSlideIndex);
+    }
+
+    // 3つのスライドindexからなる配列の真ん中である1番目がclickされたindexと異なる場合
+    if(activeIndexArray[1]!==clickedIdx){
+        let activeIndex = activeIndexArray.indexOf(clickedIdx);
+        if(activeIndex===0){
+            categorySwiper.slidePrev();
+            return false;
+        }else if(activeIndex===2){
+            categorySwiper.slideNext();
+            return false;
+        }
+    }else{
+        return true;
+    }
+
+}
+
 // メニューのカテゴリースライドをクリックしたときの処理
 for (let i = 0; i < CategorySlide.length; i++) {
     CategorySlide[i].addEventListener("click", async function (e) {
-        // クリックされたスライドのサイズと位置を取得
-        const slideImage = e.currentTarget.querySelector("img");
-        const slideRect = slideImage.getBoundingClientRect();
 
-        const animImage = AnimationContainer.querySelector("img");
-        const animText = AnimationContainer.querySelector("p");
+        let slideIdx = e.currentTarget.dataset.swiperSlideIndex;
 
-        //カテゴリースライド非表示
-        HideCategoryContainer();
+        // クリックされたスライドのidを取得
+        currentParentId = e.currentTarget.getAttribute('data-id')
 
-        if (!contentSwiper.destroyed) {
-            contentSwiper.destroy(true, true); // 破棄時にHTMLやCSSをリセット
+        if(MoveSlideToCenter(slideIdx)){
+            // クリックされたスライドのサイズと位置を取得
+            const slideImage = e.currentTarget.querySelector("img");
+            const slideRect = slideImage.getBoundingClientRect();
+
+            const animImage = AnimationContainer.querySelector("img");
+            const animText = AnimationContainer.querySelector("p");
+
+            //カテゴリースライド非表示
+            HideCategoryContainer();
+
+            if (!contentSwiper.destroyed) {
+                contentSwiper.destroy(true, true); // 破棄時にHTMLやCSSをリセット
+            }
+            if (contentSwiper.destroyed) {
+                contentSwiper = initializeContentSwiper(`.swiper-${e.currentTarget.id}`); // Swiper再生成
+            }
+            currentContainer = document.getElementById(`container_${e.currentTarget.id}`);
+            ShowContentVideos(currentContainer);
+
+            const img = e.currentTarget.closest(".category-slide").querySelector("img");
+            const text = e.currentTarget.closest(".category-slide").querySelector("p");
+
+            //画像サイズ変更アニメーション
+            ImgSizeChangeAnimation(slideRect,animImage,animText,img,text);
+
+            await Sleep(1500); // 1.5秒待機
+
+            ShowNextView(currentParentId); // 次のビューを表示
+
+            subCategoryIdArray.push(currentParentId);//戻るボタン用に保存
+
+            ShowContentContainer(animText); // コンテンツを表示
         }
-        if (contentSwiper.destroyed) {
-            contentSwiper = initializeContentSwiper(`.swiper-${e.currentTarget.id}`); // Swiper再生成
-        }
-        currentContainer = document.getElementById(`container_${e.currentTarget.id}`);
-        ShowContentVideos(currentContainer);
-
-        const img = e.currentTarget.closest(".category-slide").querySelector("img");
-        const text = e.currentTarget.closest(".category-slide").querySelector("p");
-
-        //画像サイズ変更アニメーション
-        ImgSizeChangeAnimation(slideRect,animImage,animText,img,text);
-
-        await Sleep(1500); // 1.5秒待機
-
-
-        currentParentId = CategorySlide[i].getAttribute('data-id');
-
-        let idx = CategorySlide[i].getAttribute('data-id');
-        ShowNextView(idx);
-
-        ShowContentContainer(animText); // コンテンツを表示
     });
 }
 
-// コンテンツを閉じるボタンをクリック時の処理
-CloseContentsBtn.addEventListener("click", async function () {
+// TOPボタンをクリック時の処理
+TopBtn.addEventListener("click", async function () {
     AnimationSlide.style.left = '0'; // 左端に移動
     AnimationSlide.style.opacity = '1'; // 表示
 
@@ -104,9 +142,35 @@ CloseContentsBtn.addEventListener("click", async function () {
     ShowCategoryContainer();
     AnimationSlide.style.left = '100%'; // 右端に移動
     HideContentVideos(currentContainer);
+    SubNoContentsText.classList.add("hidden");
+    subCategoryIdArray = [];
+    HideSwiperSlide();
 
     await Sleep(1000); // さらに1秒待機
 
+    AnimationSlide.style.opacity = '0'; // 透明にする
+    AnimationSlide.style.left = '-100%'; // 左端の外に移動
+});
+
+// 戻るボタンをクリック時の処理
+BackBtn.addEventListener("click", async function () {
+    AnimationSlide.style.left = '0'; // 左端に移動
+    AnimationSlide.style.opacity = '1'; // 表示
+    await Sleep(1000);
+    AnimationSlide.style.left = '100%'; // 右端の外に移動
+    if (SubNoContentsText.classList.contains("hidden") === false) {
+        SubNoContentsText.classList.add("hidden");
+    }
+    HideSwiperSlide();
+    ShowNextView(subCategoryIdArray[subCategoryIdArray.length - 2]); // 配列の中から前のidを取得し、表示
+    subCategoryIdArray.pop(); // 配列の一番最後を削除
+    if (subCategoryIdArray.length === 1) {
+        BackBtn.classList.add("hidden");
+    }
+
+    await Sleep(1000); // さらに1秒待機
+
+    // 透明にして右端に移動させる
     AnimationSlide.style.opacity = '0'; // 透明にする
     AnimationSlide.style.left = '-100%'; // 左端の外に移動
 });
@@ -168,7 +232,8 @@ function Sleep(ms) {
 // コンテンツ非表示
 function HideContentContainer(){
     ContentsContainer.classList.add("hidden");
-    CloseContentsBtn.style.display = "none";
+    BackBtn.classList.add("hidden");
+    TopBtn.style.display = "none";
     CategoryTitle.style.display = "none";
 }
 
@@ -176,7 +241,7 @@ function HideContentContainer(){
 function ShowContentContainer(text){
     ContentsContainer.classList.remove("hidden");
     ContentsContainer.classList.add("flex");
-    CloseContentsBtn.style.display = "block";
+    TopBtn.style.display = "block";
     CategoryTitle.style.display = "block";
     CategoryTitle.innerText = text.innerText;
 }
@@ -195,16 +260,53 @@ function HideContentVideos(container){
     container.classList.remove("contentSwiper");
 }
 
+// サブカテゴリーをクリックしたときの処理
+for (let i = 0; i < subCategories.length; i++) {
+    subCategories[i].addEventListener("click", async  function (e) {
 
+        AnimationSlide.style.left = '0'; // 左端に移動
+        AnimationSlide.style.opacity = '1'; // 表示
+        await Sleep(1000); // 1秒待機
+        AnimationSlide.style.left = '100%'; // 右端に移動
+
+        HideSwiperSlide();// すべての `sub-contentとsub-category` を非表示
+
+        let id = subCategories[i].getAttribute('data-id');
+
+        subCategoryIdArray.push(id);//戻るボタン用に保存
+
+        if(subCategoryIdArray.length > 1){
+            BackBtn.classList.remove("hidden");
+        }
+
+        ShowNextView(id); // 次のビューを表示
+
+        await Sleep(1000); // さらに1秒待機
+
+        AnimationSlide.style.opacity = '0'; // 透明にする
+        AnimationSlide.style.left = '-100%'; // 左端の外に移動
+    });
+}
+
+// サブカテゴリーをクリックし、次のコンテンツとサブコンテンツを表示
 function ShowNextView(id) {
-    let categories = document.getElementsByClassName("parent_id_" + id);
 
-    for (let i = 0; i < categories.length; i++) {
-        categories[i].classList.remove("hidden"); // `hidden` を削除
-        categories[i].classList.remove("!hidden"); // 念のため `!hidden` も削除
-        categories[i].classList.add("swiper-slide");
+    let categories_contents_data = document.getElementsByClassName("parent_id_" + id);
+
+    // サブカテゴリーもコンテンツもない場合、no contentsを表示
+    if (categories_contents_data.length === 0) {
+        SubNoContentsText.classList.remove("hidden");//no contentsテキスト要素
+        return;
     }
 
+    // データを表示
+    for (let i = 0; i < categories_contents_data.length; i++) {
+        categories_contents_data[i].classList.remove("hidden"); // `hidden` を削除
+        categories_contents_data[i].classList.remove("!hidden"); // 念のため `!hidden` も削除
+        categories_contents_data[i].classList.add("swiper-slide");
+    }
+
+    // swiperのリセット
     if (!contentSwiper.destroyed) {
         contentSwiper.destroy(true, true); // 破棄時にHTMLやCSSをリセット
     }
@@ -212,25 +314,19 @@ function ShowNextView(id) {
     contentSwiper = initializeContentSwiper(`.swiper-${currentParentId}`);
 }
 
+// swiper-slide classを持つサブカテゴリーとサブコンテンツを非表示
+function HideSwiperSlide() {
 
-let subCategories = document.getElementsByClassName("sub-category");
-let subContents = document.getElementsByClassName("sub-content");
+    // すべての `sub-content` を非表示
+    for (let j = 0; j < subContents.length; j++) {
+        subContents[j].classList.add("!hidden"); // `hidden` を追加
+        subContents[j].classList.remove("swiper-slide");
+    }
 
-for (let i = 0; i < subCategories.length; i++) {
-    subCategories[i].addEventListener("click", function (e) {
-        let id = subCategories[i].getAttribute('data-id');
-        // すべての `sub-content` を非表示
-        for (let j = 0; j < subContents.length; j++) {
-            subContents[j].classList.add("!hidden"); // `hidden` を追加
-            subContents[j].classList.remove("swiper-slide");
-        }
-
-        // すべての `sub-category` を非表示
-        for (let j = 0; j < subCategories.length; j++) {
-            subCategories[j].classList.add("!hidden");
-            subCategories[j].classList.remove("swiper-slide"); // 念のため `!hidde
-        }
-
-        ShowNextView(id);
-    });
+    // すべての `sub-category` を非表示
+    for (let j = 0; j < subCategories.length; j++) {
+        subCategories[j].classList.add("!hidden");
+        subCategories[j].classList.remove("swiper-slide"); // 念のため `!hidde
+    }
 }
+

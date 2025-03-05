@@ -39,6 +39,9 @@
             <div class="btn-wrap hidden" id="close_contents_btn">
                 <a class="btn btn-switch2"><span>戻る</span></a>
             </div>
+            <div class="btn-wrap hidden" id="back_top_btn">
+                <a class="btn btn-switch2"><span>TOP</span></a>
+            </div>
         </aside>
         <p id="category" class="hidden text-xl text-white font-bold border-b border-solid border-white"></p>
     </div>
@@ -79,58 +82,14 @@
                 </div>
             </div>
         @endforeach
+
+        {{--サブカテゴリーをクリックして、その中にコンテンツがない場合（JSでhiddenをremove）--}}
+        <h1 id="sub_no_contents_text" class="hidden text-center justify-center w-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-4xl text-white z-100 font-bold">
+            No Contents
+        </h1>
     </section>
 
-
-
-    {{--各コンテンツ--}}
-{{--    <section id="contents_container" class="hidden justify-center items-center h-full w-full py-20">--}}
-{{--        @foreach($categories as $value)--}}
-{{--            <div class="hidden swiper swiper-{{$value['id']}} hideContainer" id="container_{{$value['id']}}">--}}
-{{--                <div class="swiper-wrapper">--}}
-{{--                    @if(count($value->contents)==0)--}}
-{{--                        <h1 class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-4xl text-white z-100 font-bold">No Contents</h1>--}}
-{{--                    @else--}}
-{{--                        --}}{{--サブカテゴリー--}}
-{{--                        @foreach($categories as $category)--}}
-{{--                            @if($value['id'] == $category['parent_id'] && $value['id'] != $category['id'] )--}}
-{{--                                <div class="video-container relative swiper-slide overflow-hidden">--}}
-{{--                                    <!-- Thumbnail Image -->--}}
-{{--                                    <img--}}
-{{--                                        src="{{ asset($category['img'])}}"--}}
-{{--                                        alt="Video Thumbnail"--}}
-{{--                                        class="thumbnail object-cover m-auto w-full h-full cursor-pointer absolute top-0 left-0 z-10"--}}
-{{--                                        onclick="playVideo(this)"--}}
-{{--                                    >--}}
-{{--                                </div>--}}
-{{--                            @endif--}}
-{{--                        @endforeach--}}
-
-{{--                        --}}{{--カテゴリーidに紐づくコンテンツを表示--}}
-{{--                        @foreach($value->contents as $val)--}}
-{{--                            <div class="video-container relative swiper-slide overflow-hidden">--}}
-{{--                                <!-- Thumbnail Image -->--}}
-{{--                                <img--}}
-{{--                                    src="{{ asset($val['img'])}}"--}}
-{{--                                    alt="Video Thumbnail"--}}
-{{--                                    class="thumbnail object-cover m-auto w-full h-full cursor-pointer absolute top-0 left-0 z-10"--}}
-{{--                                    onclick="playVideo(this)"--}}
-{{--                                >--}}
-
-{{--                                <!-- YouTube Player -->--}}
-{{--                                <div class="youtubePlayer w-full h-auto" data-id="{{$val["id"]}}" data-url="{{$val['url']}}" style="display: none;"></div>--}}
-{{--                            </div>--}}
-{{--                        @endforeach--}}
-{{--                    @endif--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        @endforeach--}}
-{{--    </section>--}}
     <script>
-
-        window.laravel = @json($categories2);
-        console.log(window.laravel);
-
         let tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         let firstScriptTag = document.getElementsByTagName('script')[0];
