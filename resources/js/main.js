@@ -8,7 +8,7 @@ const CategorySlide = document.getElementsByClassName("category-slide");
 
 // コンテンツ
 const ContentsContainer = document.getElementById("contents_container");
-const CategoryTitle = document.getElementById("category");
+let CategoryTitle = document.getElementById("category");
 const BackBtn = document.getElementById("close_contents_btn");
 const TopBtn = document.getElementById("back_top_btn");
 const SubNoContentsText = document.getElementById("sub_no_contents_text");
@@ -164,8 +164,19 @@ BackBtn.addEventListener("click", async function () {
     HideSwiperSlide();
     ShowNextView(subCategoryIdArray[subCategoryIdArray.length - 2]); // 配列の中から前のidを取得し、表示
     subCategoryIdArray.pop(); // 配列の一番最後を削除
+
+    let element =null;
+    let dataName = null;
+
     if (subCategoryIdArray.length === 1) {
-        BackBtn.classList.add("hidden");
+        BackBtn.classList.add("hidden");//戻るボタン非表示
+        element = document.querySelector(`.category-slide[data-id="${currentParentId}"]`);
+        dataName = element.dataset.name;
+        CategoryTitle.innerText = dataName;
+    }else{
+        element = document.querySelector(`.sub-category[data-id="${subCategoryIdArray[subCategoryIdArray.length - 1]}"]`);
+        dataName = element.dataset.name;
+        CategoryTitle.innerText = dataName;
     }
 
     await Sleep(1000); // さらに1秒待機
@@ -264,9 +275,15 @@ function HideContentVideos(container){
 for (let i = 0; i < subCategories.length; i++) {
     subCategories[i].addEventListener("click", async  function (e) {
 
+        // ページ上部タイトル用（非同期処理 (Sleep(1000)) の後だと、e.currentTarget の参照が変わる、もしくは null になる可能性があるのでここで保存)
+        const categoryName = e.currentTarget.getAttribute('data-name');
+
         AnimationSlide.style.left = '0'; // 左端に移動
         AnimationSlide.style.opacity = '1'; // 表示
         await Sleep(1000); // 1秒待機
+
+        CategoryTitle.innerText = categoryName;//ページ上部タイトル変更
+
         AnimationSlide.style.left = '100%'; // 右端に移動
 
         HideSwiperSlide();// すべての `sub-contentとsub-category` を非表示
