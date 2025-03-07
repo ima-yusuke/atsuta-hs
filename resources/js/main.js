@@ -156,6 +156,10 @@ TopBtn.addEventListener("click", async function () {
 
 // 戻るボタンをクリック時の処理
 BackBtn.addEventListener("click", async function () {
+
+    // // ボタンやサブカテゴリーを無効化
+    DisableInteractions();
+
     AnimationSlide.style.left = '0'; // 左端に移動
     AnimationSlide.style.opacity = '1'; // 表示
     await Sleep(1000);
@@ -172,12 +176,13 @@ BackBtn.addEventListener("click", async function () {
     if (subCategoryIdArray.length === 1) {
         BackBtn.classList.add("hidden");//戻るボタン非表示
         // メニュースライドを取得し、そこからdata-nameを取得してページ上部タイトルに表示
-        element = document.querySelector(`.category-slide[data-id="${currentParentId}"]`);
+        element = document.querySelector(`.category-slide[id="${currentParentId}"]`);
         dataName = element.dataset.name;
         CategoryTitle.innerText = dataName;
     }else{
         // サブカテゴリースライドを取得し、そこからdata-nameを取得してページ上部タイトルに表示
         element = document.querySelector(`.sub-category[data-id="${subCategoryIdArray[subCategoryIdArray.length - 1]}"]`);
+
         dataName = element.dataset.name;
         CategoryTitle.innerText = dataName;
     }
@@ -187,7 +192,36 @@ BackBtn.addEventListener("click", async function () {
     // 透明にして右端に移動させる
     AnimationSlide.style.opacity = '0'; // 透明にする
     AnimationSlide.style.left = '-100%'; // 左端の外に移動
+
+    // ボタンやサブカテゴリーを再度有効化
+    EnableInteractions();
 });
+
+// 他のボタンやサブカテゴリーを無効化
+function DisableInteractions() {
+    // すべてのサブカテゴリーのクリックを無効にする
+    if (subCategories.length > 0) {  // 配列が空でない場合
+        for (let i = 0; i < subCategories.length; i++) {
+            subCategories[i].style.pointerEvents = 'none'; // クリックを無効にする
+        }
+    }
+
+    // 戻るボタンのクリックを無効にする
+    BackBtn.style.pointerEvents = 'none';
+}
+
+// 他のボタンやサブカテゴリーを有効化
+function EnableInteractions() {
+    // すべてのサブカテゴリーのクリックを有効にする
+    if (subCategories.length > 0) {  // 配列が空でない場合
+        for (let i = 0; i < subCategories.length; i++) {
+            subCategories[i].style.pointerEvents = 'auto'; // クリックを有効にする
+        }
+    }
+
+    // 戻るボタンのクリックを有効にする
+    BackBtn.style.pointerEvents = 'auto';
+}
 
 // カテゴリースライド表示
 function ShowCategoryContainer(){
@@ -278,6 +312,8 @@ function HideContentVideos(container){
 for (let i = 0; i < subCategories.length; i++) {
     subCategories[i].addEventListener("click", async  function (e) {
 
+        DisableInteractions();
+
         // ページ上部タイトル用（非同期処理 (Sleep(1000)) の後だと、e.currentTarget の参照が変わる、もしくは null になる可能性があるのでここで保存)
         const categoryName = e.currentTarget.getAttribute('data-name');
 
@@ -305,6 +341,8 @@ for (let i = 0; i < subCategories.length; i++) {
 
         AnimationSlide.style.opacity = '0'; // 透明にする
         AnimationSlide.style.left = '-100%'; // 左端の外に移動
+
+        EnableInteractions();
     });
 }
 
