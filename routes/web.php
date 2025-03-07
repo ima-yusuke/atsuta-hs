@@ -32,6 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::post("dashboard/update-content-order",[AdminController::class,"UpdateContentOrder"])->name("UpdateContentOrder");
     Route::delete("/dashboard/content/{id}",[AdminController::class,"DeleteContent"])->name("DeleteContent");
 
+    // 並び替え
+    Route::get("/dashboard/sort",[AdminController::class,"ShowSort"])->name("ShowSort");
+    Route::post('/dashboard/update-order', [AdminController::class, 'UpdateOrder'])->name('UpdateOrder');
 });
 
 require __DIR__.'/auth.php';

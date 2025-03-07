@@ -15,6 +15,7 @@
         <div class="max-md:hidden w-2/12"></div>
         {{--コンテンツ一覧表示--}}
         <div id="content-list" class="flex flex-col w-9/12 lg:w-8/12 md:mt-32 mt-12 mx-auto">
+            {{--更新処理表示--}}
             @if (session('success'))
                 <div id="success-alert" class="alert-area bg-green-100 border border-green-400 text-green-700 px-10 py-3 mb-4 rounded relative" role="alert">
                     <strong class="font-bold">{{ session('success') }}</strong>
@@ -86,8 +87,18 @@
                         <div class="flex flex-col w-full mt-3">
                             <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
                             <div class="flex flex-col w-full md:flex-row items-center mt-1">
-                                <label for="img" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>新規サムネイル画像：</label>
-                                <input type="file" name="img" id="img" class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500" />
+                                <label for="img_new" class="w-40 pe-2 text-gray-900 text-nowrap">
+                                    <span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>
+                                    新規サムネイル画像：
+                                </label>
+                                <input type="file" name="img" id="img_new"
+                                       class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+
+                            {{-- 新規コンテンツの選択した画像 --}}
+                            <div id="preview-container_new" class="flex-col max-md:items-center w-full mt-3 hidden">
+                                <label class="text-gray-900 text-nowrap">選択した画像：</label>
+                                <img id="preview_new" src="" alt="選択した画像" class="w-60" />
                             </div>
                             @error('img', 'add')
                             <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
@@ -114,8 +125,8 @@
                     <div id="{{ $content->id }}" class="sortable-item" data-sort-category-id="{{ $content->category_id }}">
                         <button class="hidden video-contents w-full text-left mb-2 px-10 py-6 font-bold text-xl bg-white hover:bg-gray-200" data-content-category-id="{{ $content->category_id }}">
                             <span class="w-full">{{ $content->name }}</span>
-                            <i class="bi bi-chevron-up hidden text-2xl md:me-10 self-center"></i>
-                            <i class="bi bi-chevron-down text-2xl md:me-10 self-center"></i>
+                            <i class="bi bi-chevron-up opened hidden text-2xl md:me-10 self-center"></i>
+                            <i class="bi bi-chevron-down closed text-2xl md:me-10 self-center"></i>
                         </button>
                         <div class="hidden content-details md:px-10 md:py-3 px-2 py-1 bg-white border-t border-solid flex-col @if ($errors->getBag('update' . $content->id)->has('name_' . $content->id) || $errors->getBag('update' . $content->id)->has('img') || $errors->getBag('update' . $content->id)->has('url_' . $content->id) || $errors->getBag('update' . $content->id)->has('category_id')) has-error @endif">
                             @if ($errors->getBag('update' . $content->id)->has('name_' . $content->id) || $errors->getBag('update' . $content->id)->has('img') || $errors->getBag('update' . $content->id)->has('url_' . $content->id) || $errors->getBag('update' . $content->id)->has('category_id'))
@@ -211,6 +222,5 @@
             form.submit();
         }
     </script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     @vite('resources/js/admin/content.js')
 </x-app-layout>

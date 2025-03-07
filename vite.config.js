@@ -28,6 +28,7 @@ export default defineConfig({
                 screenSize: 'resources/js/screen-size.js',
                 adminCategory: 'resources/js/admin/category.js',
                 adminContent: 'resources/js/admin/content.js',
+                adminSort: 'resources/js/admin/sort.js',
             }
         }
     }
