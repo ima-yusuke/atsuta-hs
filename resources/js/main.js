@@ -56,7 +56,7 @@ function initializeContentSwiper(className) {
     });
 }
 
-let contentSwiper = initializeContentSwiper(".swiper-2");//デフォルト
+let contentSwiper = initializeContentSwiper(".swiper-1");//デフォルト
 
 function MoveSlideToCenter(clickedIdx) {
 
@@ -92,7 +92,7 @@ for (let i = 0; i < CategorySlide.length; i++) {
         let slideIdx = e.currentTarget.dataset.swiperSlideIndex;
 
         // クリックされたスライドのidを取得
-        currentParentId = e.currentTarget.getAttribute('data-id')
+        currentParentId = e.currentTarget.id
 
         if(MoveSlideToCenter(slideIdx)){
             // クリックされたスライドのサイズと位置を取得
@@ -104,14 +104,14 @@ for (let i = 0; i < CategorySlide.length; i++) {
 
             //カテゴリースライド非表示
             HideCategoryContainer();
-
             if (!contentSwiper.destroyed) {
                 contentSwiper.destroy(true, true); // 破棄時にHTMLやCSSをリセット
             }
             if (contentSwiper.destroyed) {
-                contentSwiper = initializeContentSwiper(`.swiper-${e.currentTarget.id}`); // Swiper再生成
+                contentSwiper = initializeContentSwiper(`.swiper-${currentParentId}`); // Swiper再生成
             }
-            currentContainer = document.getElementById(`container_${e.currentTarget.id}`);
+
+            currentContainer = document.getElementById(`container_${currentParentId}`);
             ShowContentVideos(currentContainer);
 
             const img = e.currentTarget.closest(".category-slide").querySelector("img");
@@ -122,11 +122,13 @@ for (let i = 0; i < CategorySlide.length; i++) {
 
             await Sleep(1500); // 1.5秒待機
 
-            ShowNextView(currentParentId); // 次のビューを表示
-
             subCategoryIdArray.push(currentParentId);//戻るボタン用に保存
 
             ShowContentContainer(animText); // コンテンツを表示
+
+            HideSwiperSlide();
+
+            ShowNextView(currentParentId); // 次のビューを表示
         }
     });
 }
@@ -167,13 +169,14 @@ BackBtn.addEventListener("click", async function () {
 
     let element =null;
     let dataName = null;
-
     if (subCategoryIdArray.length === 1) {
         BackBtn.classList.add("hidden");//戻るボタン非表示
+        // メニュースライドを取得し、そこからdata-nameを取得してページ上部タイトルに表示
         element = document.querySelector(`.category-slide[data-id="${currentParentId}"]`);
         dataName = element.dataset.name;
         CategoryTitle.innerText = dataName;
     }else{
+        // サブカテゴリースライドを取得し、そこからdata-nameを取得してページ上部タイトルに表示
         element = document.querySelector(`.sub-category[data-id="${subCategoryIdArray[subCategoryIdArray.length - 1]}"]`);
         dataName = element.dataset.name;
         CategoryTitle.innerText = dataName;
