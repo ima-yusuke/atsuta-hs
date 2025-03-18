@@ -25,8 +25,10 @@
 
 <body class="flex justify-center items-center disable-click">
 
+    <div class="w-full h-full absolute" style="background-image: url({{asset("storage/img/background_img.JPG")}}); background-size: cover; background-position: center;"></div>
+
     {{--パーティクル--}}
-    <div id="tsparticles"></div>
+    {{--<div id="tsparticles"></div>--}}
 
     {{--閉じるボタンクリック時のアニメーションスライド--}}
     <div id="slide" class="slide"></div>
@@ -53,7 +55,7 @@
         {{--スライド--}}
         <div class="swiper categorySwiper">
             <div class="swiper-wrapper">
-                @foreach($categories2 as $value)
+                @foreach($categories as $value)
                     <x-category-slide :id="$value['id']" :name="$value['name']" :url="$value['img']"/>
                 @endforeach
             </div>
@@ -69,7 +71,7 @@
     </section>
 
     <section id="contents_container" class="hidden justify-center items-center h-full w-full py-20">
-        @foreach($categories2 as $value)
+        @foreach($categories as $value)
             <div class="hidden swiper swiper-{{$value->id}} hideContainer" id="container_{{$value->id}}">
                 <div class="swiper-wrapper">
                     {{-- サブカテゴリーもコンテンツもない場合 --}}
@@ -159,6 +161,6 @@
             return match ? match[1] : null;
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/preset-links@3/tsparticles.preset.links.bundle.min.js"></script>
+    {{--    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/preset-links@3/tsparticles.preset.links.bundle.min.js"></script>--}}
 </body>
 </html>
