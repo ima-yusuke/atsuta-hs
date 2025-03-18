@@ -25,7 +25,7 @@
 
 <body class="flex justify-center items-center disable-click">
 
-    <div class="w-full h-full absolute" style="background-image: url({{asset("storage/img/background_img.JPG")}}); background-size: cover; background-position: center;"></div>
+    <div class="w-full h-full absolute" style="background-image: url({{asset("storage/img/bg-img.jpeg")}}); background-size: cover; background-position: bottom;"></div>
 
     {{--パーティクル--}}
     {{--<div id="tsparticles"></div>--}}
