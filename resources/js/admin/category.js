@@ -78,4 +78,68 @@ document.addEventListener('DOMContentLoaded', () => {
             previewImage(event, id);
         });
     });
+
+    // 並び替え処理
+    const sortable = document.getElementById('sortable-category-list');
+    Sortable.create(sortable, {
+        animation: 150,
+        filter: 'input, select, textarea, .update-btn, .delete-btn',
+        preventOnFilter: false,
+        onSort: onSortEvent
+    });
 });
+
+function onSortEvent(e) {
+    UpdateOrder(e.target, "sortable-item", '/dashboard/update-category-order');
+}
+
+function UpdateOrder(target, selector, url) {
+    const items = target.querySelectorAll('.' + selector);
+    let orderData = [];
+
+    for (let i = 0; i < items.length; i++) {
+        let id = items[i].id;
+        orderData.push({ id: id, order: i + 1 });
+    }
+    UpdateCategoryOrderRequest(url, orderData);
+}
+
+function UpdateCategoryOrderRequest(url, orderData) {
+    FetchData(url, 'POST', true, JSON.stringify({
+        orderData: orderData,
+    }))
+        .then(data => {
+            console.log(data);
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+function FetchData(url, method, headerData, bodyData) {
+    const headers = {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    };
+    if (headerData) {
+        Object.assign(headers, {
+            'Content-Type': 'application/json'
+        });
+    }
+
+    return fetch(url, {
+        method: method,
+        headers: headers,
+        body: bodyData,
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            throw new Error(error.message);
+        });
+}

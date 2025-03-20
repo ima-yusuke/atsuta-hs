@@ -20,23 +20,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // カテゴリー切り替え
     const categoryItems = document.querySelectorAll(".category-item");
     const newContent = document.getElementById('new-content');
-    const allCategoryTitles = document.querySelectorAll('.category-title');  // 全てのカテゴリタイトルを取得
 
     categoryItems.forEach((item) => {
         item.addEventListener("click", () => {
             // data-category-id属性からカテゴリーIDを取得
             const categoryId = item.getAttribute("data-category-id");
-            const categoryTitleNew = document.getElementById('category-title-new');
             document.querySelectorAll('.video-contents').forEach(button => {
-                const categoryTitle = document.getElementById('category-title-' + categoryId);
                 const contentCategoryId = button.getAttribute('data-content-category-id');
                 const contentDetails = button.nextElementSibling;
                 const show = document.querySelectorAll('.bi-chevron-down');
                 const none = document.querySelectorAll('.bi-chevron-up');
-                categoryTitleNew.classList.add('hidden');
-                if (categoryTitle) {
-                    categoryTitle.classList.add('hidden');
-                }
                 button.classList.remove('flex');
                 button.classList.add('hidden');
                 button.classList.add('mb-2');
@@ -49,27 +42,23 @@ document.addEventListener("DOMContentLoaded", () => {
                     icon.classList.add('hidden');
                 });
                 if (categoryId === contentCategoryId) {
-                    if (categoryTitle) {  // categoryTitleが存在する場合のみ表示
-                        categoryTitle.classList.remove('hidden');
-                    }
                     button.classList.remove('hidden');
                     button.classList.add('flex');
                 }
             });
-
-            // 他のカテゴリータイトルを非表示に
-            allCategoryTitles.forEach(title => {
-                if (title.id !== 'category-title-' + categoryId) {
-                    title.classList.add('hidden');
-                } else {
-                    title.classList.remove('hidden');
+            document.querySelectorAll('.nested-category').forEach(button => {
+                const parentCategoryId = button.getAttribute('data-parent-category-id');
+                button.classList.remove('flex');
+                button.classList.add('hidden');
+                button.classList.add('mb-2');
+                if (categoryId === parentCategoryId) {
+                    button.classList.remove('hidden');
+                    button.classList.add('flex');
                 }
             });
-
             // 新規コンテンツの表示
             newContent.classList.add('hidden');
-            if (categoryId === '0') {
-                categoryTitleNew.classList.remove('hidden');
+            if (categoryId === 'new') {
                 newContent.classList.remove('hidden');
             }
         });
@@ -142,4 +131,93 @@ document.addEventListener("DOMContentLoaded", () => {
             previewImage(event, id);
         });
     });
+
+    // 並び替え処理
+    const sortable = document.getElementById('sortable-content-list');
+    Sortable.create(sortable, {
+        animation: 150,
+        filter: 'input, select, textarea, .update-btn, .delete-btn',
+        preventOnFilter: false,
+        onSort: onSortEvent
+    });
+
+    // カテゴリーのアコーディオン
+    document.querySelectorAll(".category-item").forEach((item) => {
+        item.addEventListener("click", function (event) {
+            event.stopPropagation(); // クリックイベントのバブリングを防ぐ
+
+            let childrenContainer = this.querySelector(":scope > .child-categories"); // 直下の子要素
+            if (childrenContainer) {
+                childrenContainer.classList.toggle("hidden");
+            }
+        });
+    });
 });
+
+// 以下並び替え処理
+function onSortEvent(e) {
+    const draggedCategoryId = e.item.getAttribute('data-sort-category-id');
+    UpdateOrder(e.target, "sortable-item", '/dashboard/update-content-order', draggedCategoryId);
+}
+
+function UpdateOrder(target, selector, url, draggedCategoryId) {
+    const items = target.querySelectorAll('.' + selector);
+    let orderData = [];
+
+    for (let i = 0; i < items.length; i++) {
+        let id = items[i].id;
+        orderData.push({ id: id, order: i + 1 });
+    }
+    UpdateContentOrderRequest(url, orderData, draggedCategoryId);
+}
+
+async function UpdateContentOrderRequest(url, orderData, draggedCategoryId) {
+    try {
+        const response = await FetchData(url, 'POST', true, JSON.stringify({
+            orderData: orderData,
+            draggedCategoryId: draggedCategoryId
+        }));
+
+        if (response.status === "success") {
+            // サーバーからのレスポンスを元に並び順を更新
+            orderData.forEach(data => {
+                const item = document.getElementById(data.id);
+                if (item) {
+                    item.setAttribute("data-order", data.order);
+                }
+            });
+            console.log("並び替えが完了しました！");
+        } else {
+            console.error("並び替えの更新に失敗しました");
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+function FetchData(url, method, headerData, bodyData) {
+    const headers = {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    };
+    if (headerData) {
+        Object.assign(headers, {
+            'Content-Type': 'application/json'
+        });
+    }
+
+    return fetch(url, {
+        method: method,
+        headers: headers,
+        body: bodyData,
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            throw new Error(error.message);
+        });
+}

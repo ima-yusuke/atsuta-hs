@@ -3,13 +3,16 @@
         {{--カテゴリー選択--}}
         <div id="selected-category" class="hidden" data-selected-category="{{ session('select_category') }}"></div>
         <div class="side-nav md:fixed max-md:flex left-0 top-0 md:w-2/12 w-full md:h-[100dvh] h-20 md:mt-16 bg-white md:overflow-y-auto overflow-x-auto">
-            <div id="category-list-0" class="sticky top-0 left-0 category-item flex flex-col items-center md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="0">
+            <div id="category-list-new" class="sticky top-0 left-0 category-item flex flex-col items-center md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="new">
                 <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">新規登録</p>
             </div>
+            <div id="category-list-0" class="sticky top-0 left-0 category-item flex flex-col md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="0">
+                <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">ルートカテゴリ</p>
+            </div>
             @foreach($categories as $category)
-                <div id="category-list-{{ $category->id }}" class="category-item flex flex-col items-center md:w-full mx-auto md:px-3 md:py-6 px-6 py-3 border-y border-solid hover:bg-gray-200 cursor-pointer" data-category-id="{{ $category->id }}">
-                    <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">{{ $category->name }}</p>
-                </div>
+                @if($category->parent_id === 0)
+                    @include('components.category-item', ['category' => $category])
+                @endif
             @endforeach
         </div>
         <div class="max-md:hidden w-2/12"></div>
@@ -91,8 +94,7 @@
                                     <span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>
                                     新規サムネイル画像：
                                 </label>
-                                <input type="file" name="img" id="img_new"
-                                       class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500">
+                                <input type="file" name="img" id="img_new" class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500">
                             </div>
 
                             {{-- 新規コンテンツの選択した画像 --}}
@@ -110,18 +112,17 @@
                     </div>
                 </form>
             </div>
-            @php
-                $lastCategoryId = null; // 直前のカテゴリーID
-            @endphp
             {{--既存コンテンツ--}}
             <div id="sortable-content-list">
+                <p id="category-title" class="text-2xl font-bold text-start mb-8"></p>
+                @foreach($categories as $category)
+                    <div id="{{ $category->id }}" class="sortable-item" data-sort-parent-id="{{ $category->parent_id }}">
+                        <button class="hidden nested-category w-full text-left mb-2 px-10 py-6 font-bold text-xl bg-white hover:bg-gray-200" data-parent-category-id="{{ $category->parent_id }}">
+                            <span class="w-full">{{ $category->name }}</span>
+                        </button>
+                    </div>
+                @endforeach
                 @foreach ($contents as $content)
-                    @if ($lastCategoryId !== $content->category_id)
-                        <p id="category-title-{{ $content->category_id }}" class="hidden category-title text-2xl font-bold text-start mb-8">{{ $content->category->name }}</p>
-                        @php
-                            $lastCategoryId = $content->category_id;
-                        @endphp
-                    @endif
                     <div id="{{ $content->id }}" class="sortable-item" data-sort-category-id="{{ $content->category_id }}">
                         <button class="hidden video-contents w-full text-left mb-2 px-10 py-6 font-bold text-xl bg-white hover:bg-gray-200" data-content-category-id="{{ $content->category_id }}">
                             <span class="w-full">{{ $content->name }}</span>
@@ -222,5 +223,6 @@
             form.submit();
         }
     </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     @vite('resources/js/admin/content.js')
 </x-app-layout>

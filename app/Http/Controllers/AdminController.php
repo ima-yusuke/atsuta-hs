@@ -97,6 +97,33 @@ class AdminController extends Controller {
         }
     }
 
+    // [更新] カテゴリー順番
+    public function UpdateCategoryOrder(Request $request) {
+        Log::info($request->orderData);
+        DB::beginTransaction();
+        try {
+            foreach ($request->orderData as $key => $array) {
+                $category = Category::find($array['id']);
+                if ($category) {
+                    $category->order = $key + 1;
+                    $category->save();
+                }
+            }
+            DB::commit();
+            return response()->json([
+                'message' => ' カテゴリーの順番が正常に更新されました',
+                'redirect' => route('ShowCategory')
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error($e);
+            return response()->json([
+                'message' => 'カテゴリーの順番を更新中にエラーが発生しました',
+                'redirect' => route('ShowCategory')
+            ]);
+        }
+    }
+
     // [削除] カテゴリー
     public function DeleteCategory($id) {
         DB::beginTransaction();
@@ -228,6 +255,35 @@ class AdminController extends Controller {
         }
     }
 
+    // [更新] コンテンツ順番
+    public function UpdateContentOrder(Request $request) {
+        DB::beginTransaction();
+        try {
+            $category = $request->draggedCategoryId;
+            foreach ($request->orderData as $key => $array) {
+                $content = Content::find($array['id']);
+                if ($content) {
+                    $content->order = $key + 1;
+                    $content->save();
+                }
+            }
+            DB::commit();
+            session()->flash('select_category', $category);
+            Log::info('Updated select_category:', ['select_category' => session('select_category')]);
+            return response()->json([
+                'message' => '動画コンテンツの順番が正常に更新されました',
+                'redirect' => route('ShowContent')
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error($e);
+            return response()->json([
+                'message' => '動画コンテンツの順番を更新中にエラーが発生しました',
+                'redirect' => route('ShowContent')
+            ]);
+        }
+    }
+
     // [削除] コンテンツ
     public function DeleteContent($id) {
         DB::beginTransaction();
@@ -256,55 +312,55 @@ class AdminController extends Controller {
     }
 
     // [並び替え] ページ遷移
-    public function ShowSort() {
-        $categories = Category::orderBy('order', 'asc')->get();
-        $contents = Content::orderBy('category_id', 'asc')->orderBy('order', 'asc')->get();
-        return view('admin.sort', compact('categories', 'contents'));
-    }
+//    public function ShowSort() {
+//        $categories = Category::orderBy('order', 'asc')->get();
+//        $contents = Content::orderBy('category_id', 'asc')->orderBy('order', 'asc')->get();
+//        return view('admin.sort', compact('categories', 'contents'));
+//    }
 
     // [並び替え] カテゴリー順番
-    public function UpdateOrder(Request $request) {
-        $categories = $request->input('categories');
-
-        foreach ($categories as $categoryData) {
-            $category = Category::find($categoryData['id']);
-            $category->update([
-                'order' => $categoryData['order'],
-                'parent_id' => $categoryData['parent_id'] ?? null
-            ]);
-
-            // 子カテゴリーの並べ替え
-            if (isset($categoryData['children'])) {
-                foreach ($categoryData['children'] as $childData) {
-                    $childCategory = Category::find($childData['id']);
-                    $childCategory->update([
-                        'order' => $childData['order'],
-                        'parent_id' => $categoryData['id']
-                    ]);
-                    // 孫カテゴリー以下の処理
-                    if (isset($childData['children'])) {
-                        foreach ($childData['children'] as $subChildData) {
-                            $subChildCategory = Category::find($subChildData['id']);
-                            $subChildCategory->update([
-                                'order' => $subChildData['order'],
-                                'parent_id' => $childData['id']
-                            ]);
-                        }
-                    }
-                }
-            }
-        }
-
-        // コンテンツの並べ替え
-        $contents = $request->input('contents');
-        foreach ($contents as $contentData) {
-            $content = Content::find($contentData['id']);
-            $content->update([
-                'order' => $contentData['order'],
-                'category_id' => $contentData['category_id'],
-            ]);
-        }
-
-        return response()->json(['status' => 'success']);
-    }
+//    public function UpdateOrder(Request $request) {
+//        $categories = $request->input('categories');
+//
+//        foreach ($categories as $categoryData) {
+//            $category = Category::find($categoryData['id']);
+//            $category->update([
+//                'order' => $categoryData['order'],
+//                'parent_id' => $categoryData['parent_id'] ?? null
+//            ]);
+//
+//            // 子カテゴリーの並べ替え
+//            if (isset($categoryData['children'])) {
+//                foreach ($categoryData['children'] as $childData) {
+//                    $childCategory = Category::find($childData['id']);
+//                    $childCategory->update([
+//                        'order' => $childData['order'],
+//                        'parent_id' => $categoryData['id']
+//                    ]);
+//                    // 孫カテゴリー以下の処理
+//                    if (isset($childData['children'])) {
+//                        foreach ($childData['children'] as $subChildData) {
+//                            $subChildCategory = Category::find($subChildData['id']);
+//                            $subChildCategory->update([
+//                                'order' => $subChildData['order'],
+//                                'parent_id' => $childData['id']
+//                            ]);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        // コンテンツの並べ替え
+//        $contents = $request->input('contents');
+//        foreach ($contents as $contentData) {
+//            $content = Content::find($contentData['id']);
+//            $content->update([
+//                'order' => $contentData['order'],
+//                'category_id' => $contentData['category_id'],
+//            ]);
+//        }
+//
+//        return response()->json(['status' => 'success']);
+//    }
 }
