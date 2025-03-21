@@ -22,7 +22,6 @@ Route::middleware('auth')->group(function () {
     Route::get("/dashboard/category",[AdminController::class,"ShowCategory"])->name("ShowCategory");
     Route::post("/dashboard/category",[AdminController::class,"AddCategory"])->name("AddCategory");
     Route::post('/dashboard/category/{id}', [AdminController::class,"UpdateCategory"])->name('UpdateCategory');
-    Route::post("/dashboard/update-category-order",[AdminController::class,"UpdateCategoryOrder"])->name("UpdateCategoryOrder");
     Route::delete("/dashboard/category/{id}",[AdminController::class,"DeleteCategory"])->name("DeleteCategory");
 
     // コンテンツ
@@ -30,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::post("/dashboard/content",[AdminController::class,"AddContent"])->name("AddContent");
     Route::post('/dashboard/content/{id}', [AdminController::class,"UpdateContent"])->name('UpdateContent');
     Route::post("dashboard/update-content-order",[AdminController::class,"UpdateContentOrder"])->name("UpdateContentOrder");
+    Route::post("/dashboard/update-category-order",[AdminController::class,"UpdateCategoryOrder"])->name("UpdateCategoryOrder");
     Route::delete("/dashboard/content/{id}",[AdminController::class,"DeleteContent"])->name("DeleteContent");
 
     // 並び替え

@@ -1,7 +1,8 @@
 <x-app-layout>
     <div class="flex flex-col md:flex-row w-full pb-12">
         {{--カテゴリー選択--}}
-        <div id="selected-category" class="hidden" data-selected-category="{{ session('select_category') }}"></div>
+        <div id="selected-category" class="hidden" data-selected-category="{{ session('select_category') ?? '0' }}"></div>
+        <div id="clicked-category" class="hidden" data-clicked-category="0"></div>
         <div class="side-nav md:fixed max-md:flex left-0 top-0 md:w-2/12 w-full md:h-[100dvh] h-20 md:mt-16 bg-white md:overflow-y-auto overflow-x-auto">
             <div id="category-list-new" class="sticky top-0 left-0 category-item flex flex-col items-center md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="new">
                 <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">新規登録</p>
@@ -113,15 +114,19 @@
                 </form>
             </div>
             {{--既存コンテンツ--}}
-            <div id="sortable-content-list">
-                <p id="category-title" class="text-2xl font-bold text-start mb-8"></p>
+            {{--<p id="category-title" class="text-2xl font-bold text-start mb-8"></p>--}}
+            <div id="sortable-category-list">
+                {{--カテゴリー一覧--}}
                 @foreach($categories as $category)
                     <div id="{{ $category->id }}" class="sortable-item" data-sort-parent-id="{{ $category->parent_id }}">
-                        <button class="hidden nested-category w-full text-left mb-2 px-10 py-6 font-bold text-xl bg-white hover:bg-gray-200" data-parent-category-id="{{ $category->parent_id }}">
+                        <button class="hidden nested-category w-full text-left mb-2 px-10 py-6 font-bold text-xl bg-gray-300 hover:bg-gray-200" data-parent-category-id="{{ $category->parent_id }}">
                             <span class="w-full">{{ $category->name }}</span>
                         </button>
                     </div>
                 @endforeach
+            </div>
+            <div id="sortable-content-list">
+                {{--コンテンツ一覧--}}
                 @foreach ($contents as $content)
                     <div id="{{ $content->id }}" class="sortable-item" data-sort-category-id="{{ $content->category_id }}">
                         <button class="hidden video-contents w-full text-left mb-2 px-10 py-6 font-bold text-xl bg-white hover:bg-gray-200" data-content-category-id="{{ $content->category_id }}">

@@ -110,38 +110,46 @@ document.addEventListener("DOMContentLoaded", () => {
             const reader = new FileReader();
             reader.onload = function (e) {
                 preview.src = e.target.result;
-                previewContainer.classList.remove('hidden'); // プレビューを表示
+                previewContainer.classList.remove('hidden');
                 previewContainer.classList.add('flex');
             };
-            reader.readAsDataURL(input.files[0]); // ファイルを読み込んでURLに変換
+            reader.readAsDataURL(input.files[0]);
         } else {
             preview.src = "";
             previewContainer.classList.remove('flex');
-            previewContainer.classList.add('hidden'); // 画像が選択されていない場合は非表示
+            previewContainer.classList.add('hidden');
         }
     }
 
-    // すべての input[type="file"] にイベントリスナーを設定
     document.querySelectorAll('input[type="file"]').forEach(input => {
         input.addEventListener('change', function (event) {
-            let id = input.getAttribute("id").replace("img_", ""); // idからcontentのIDを取得
+            let id = input.getAttribute("id").replace("img_", "");
             if (input.id === "img_new") {
-                id = "new"; // 新規コンテンツの場合
+                id = "new";
             }
             previewImage(event, id);
         });
     });
 
-    // 並び替え処理
-    const sortable = document.getElementById('sortable-content-list');
-    Sortable.create(sortable, {
+    // コンテンツ並び替え処理
+    const contentSortable = document.getElementById('sortable-content-list');
+    Sortable.create(contentSortable, {
         animation: 150,
         filter: 'input, select, textarea, .update-btn, .delete-btn',
         preventOnFilter: false,
-        onSort: onSortEvent
+        onSort: onContentSortEvent
     });
 
-    // カテゴリーのアコーディオン
+    // カテゴリー並び替え処理
+    const categorySortable = document.getElementById('sortable-category-list');
+    Sortable.create(categorySortable, {
+        animation: 150,
+        filter: 'input, select, textarea, .update-btn, .delete-btn',
+        preventOnFilter: false,
+        onSort: onCategorySortEvent
+    });
+
+    // カテゴリーnavのアコーディオン
     document.querySelectorAll(".category-item").forEach((item) => {
         item.addEventListener("click", function (event) {
             event.stopPropagation(); // クリックイベントのバブリングを防ぐ
@@ -150,17 +158,33 @@ document.addEventListener("DOMContentLoaded", () => {
             if (childrenContainer) {
                 childrenContainer.classList.toggle("hidden");
             }
+
+            // カテゴリーのハイライト表示
+            // const clickedCategoryElement = document.getElementById("clicked-category");
+            // console.log(clickedCategoryElement.dataset.clickedCategory);
+            // if (clickedCategoryElement) {
+            //     const clickedCategoryId = this.getAttribute("data-category-id");
+            //     console.log(clickedCategoryId);
+            //     const clickedCategory = document.getElementById("category-list-" + clickedCategoryId);
+            //     console.log(clickedCategory);
+            //     clickedCategory.style.backgroundColor = "#87cefa";
+            // }
         });
     });
 });
 
-// 以下並び替え処理
-function onSortEvent(e) {
+// コンテンツ並び替え処理
+function onContentSortEvent(e) {
     const draggedCategoryId = e.item.getAttribute('data-sort-category-id');
-    UpdateOrder(e.target, "sortable-item", '/dashboard/update-content-order', draggedCategoryId);
+    UpdateContentOrder(e.target, "sortable-item", '/dashboard/update-content-order', draggedCategoryId);
 }
 
-function UpdateOrder(target, selector, url, draggedCategoryId) {
+// カテゴリー並び替え処理
+function onCategorySortEvent(e) {
+    UpdateCategoryOrder(e.target, "sortable-item", '/dashboard/update-category-order');
+}
+
+function UpdateContentOrder(target, selector, url, draggedCategoryId) {
     const items = target.querySelectorAll('.' + selector);
     let orderData = [];
 
@@ -170,10 +194,20 @@ function UpdateOrder(target, selector, url, draggedCategoryId) {
     }
     UpdateContentOrderRequest(url, orderData, draggedCategoryId);
 }
+function UpdateCategoryOrder(target, selector, url) {
+    const items = target.querySelectorAll('.' + selector);
+    let orderData = [];
+
+    for (let i = 0; i < items.length; i++) {
+        let id = items[i].id;
+        orderData.push({ id: id, order: i + 1 });
+    }
+    UpdateCategoryOrderRequest(url, orderData);
+}
 
 async function UpdateContentOrderRequest(url, orderData, draggedCategoryId) {
     try {
-        const response = await FetchData(url, 'POST', true, JSON.stringify({
+        const response = await FetchContentData(url, 'POST', true, JSON.stringify({
             orderData: orderData,
             draggedCategoryId: draggedCategoryId
         }));
@@ -195,7 +229,57 @@ async function UpdateContentOrderRequest(url, orderData, draggedCategoryId) {
     }
 }
 
-function FetchData(url, method, headerData, bodyData) {
+async function UpdateCategoryOrderRequest(url, orderData) {
+    try {
+        const response = await FetchCategoryData(url, 'POST', true, JSON.stringify({
+            orderData: orderData,
+        }));
+
+        if (response.status === "success") {
+            // サーバーからのレスポンスを元に並び順を更新
+            orderData.forEach(data => {
+                const item = document.getElementById(data.id);
+                if (item) {
+                    item.setAttribute("data-order", data.order);
+                }
+            });
+            console.log("並び替えが完了しました！");
+        } else {
+            console.error("並び替えの更新に失敗しました");
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+function FetchContentData(url, method, headerData, bodyData) {
+    const headers = {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    };
+    if (headerData) {
+        Object.assign(headers, {
+            'Content-Type': 'application/json'
+        });
+    }
+
+    return fetch(url, {
+        method: method,
+        headers: headers,
+        body: bodyData,
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            throw new Error(error.message);
+        });
+}
+
+function FetchCategoryData(url, method, headerData, bodyData) {
     const headers = {
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
     };

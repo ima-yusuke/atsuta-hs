@@ -97,33 +97,6 @@ class AdminController extends Controller {
         }
     }
 
-    // [更新] カテゴリー順番
-    public function UpdateCategoryOrder(Request $request) {
-        Log::info($request->orderData);
-        DB::beginTransaction();
-        try {
-            foreach ($request->orderData as $key => $array) {
-                $category = Category::find($array['id']);
-                if ($category) {
-                    $category->order = $key + 1;
-                    $category->save();
-                }
-            }
-            DB::commit();
-            return response()->json([
-                'message' => ' カテゴリーの順番が正常に更新されました',
-                'redirect' => route('ShowCategory')
-            ]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            Log::error($e);
-            return response()->json([
-                'message' => 'カテゴリーの順番を更新中にエラーが発生しました',
-                'redirect' => route('ShowCategory')
-            ]);
-        }
-    }
-
     // [削除] カテゴリー
     public function DeleteCategory($id) {
         DB::beginTransaction();
@@ -271,15 +244,42 @@ class AdminController extends Controller {
             session()->flash('select_category', $category);
             Log::info('Updated select_category:', ['select_category' => session('select_category')]);
             return response()->json([
+                'status' => 'success',
                 'message' => '動画コンテンツの順番が正常に更新されました',
-                'redirect' => route('ShowContent')
             ]);
         } catch (\Exception $e) {
             DB::rollback();
             Log::error($e);
             return response()->json([
+                'status' => 'error',
                 'message' => '動画コンテンツの順番を更新中にエラーが発生しました',
-                'redirect' => route('ShowContent')
+            ]);
+        }
+    }
+
+    // [更新] カテゴリー順番
+    public function UpdateCategoryOrder(Request $request) {
+        Log::info($request->orderData);
+        DB::beginTransaction();
+        try {
+            foreach ($request->orderData as $key => $array) {
+                $category = Category::find($array['id']);
+                if ($category) {
+                    $category->order = $key + 1;
+                    $category->save();
+                }
+            }
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'カテゴリーの順番が正常に更新されました',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error($e);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'カテゴリーの順番を更新中にエラーが発生しました',
             ]);
         }
     }
