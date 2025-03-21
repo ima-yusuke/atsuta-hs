@@ -11,18 +11,131 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller {
-    // [ページ遷移] カテゴリー
-    function ShowCategory() {
+//    // [ページ遷移] カテゴリー
+//    function ShowCategory() {
+//        $categories = Category::orderBy('order', 'asc')->get();
+//        return view('admin.category', compact('categories'));
+//    }
+//
+//    // [追加] カテゴリー
+//    public function AddCategory(Request $request) {
+//        $validator = Validator::make($request->all(), [
+//            'name' => 'required',
+//            'img' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096',
+//        ], [], [
+//            'name' => 'カテゴリー名',
+//            'img' => 'カテゴリー画像',
+//        ]);
+//        if ($validator->fails()) {
+//            return redirect()->back()->withErrors($validator, 'add')->withInput();
+//        }
+//
+//        DB::beginTransaction();
+//        try {
+//            $category = new Category();
+//            $category->name = $request->name;
+//            // 画像保存
+//            if ($request->hasFile('img')) {
+//                $filePath = $request->file('img')->store('img/categories', 'public');
+//                $category->img = 'storage/' . $filePath;
+//            }
+//            $category->order = Category::max('order') + 1;
+//            $category->save();
+//            DB::commit();
+//            return redirect()->back()->with('success', 'カテゴリーを追加しました。');
+//        } catch (\Exception $e) {
+//            DB::rollback();
+//            Log::error($e);
+//            return redirect()->back()->with('error', 'カテゴリー追加中にエラーが発生しました。');
+//        }
+//    }
+//
+//    // [更新] カテゴリー
+//    public function UpdateCategory(Request $request, $id) {
+//        $validator = Validator::make($request->all(), [
+//            'name_' . $id => 'required',
+//            'img' => 'image|mimes:jpeg,png,jpg,gif|max:4096',
+//        ], [], [
+//            'name_' . $id => 'カテゴリー名',
+//            'img' => 'カテゴリー画像',
+//        ]);
+//        if ($validator->fails()) {
+//            return redirect()->back()->withErrors($validator, 'update' . $id)->withInput();
+//        }
+//
+//        DB::beginTransaction();
+//        try {
+//            $category = Category::find($id);
+//            if ($category) {
+//                if ($request->has('name_' . $id)) {
+//                    $category->name = $request->input('name_' . $id);
+//                }
+//                // 画像更新
+//                if ($request->hasFile('img')) {
+//                    // 既存の画像削除
+//                    if ($category->img) {
+//                        $oldImagePath = str_replace('storage/', '', $category->img);
+//                        if (Storage::disk('public')->exists($oldImagePath)) {
+//                            Storage::disk('public')->delete($oldImagePath);
+//                        }
+//                    }
+//                    // 新規の画像保存
+//                    $filePath = $request->file('img')->store('img/categories', 'public');
+//                    $category->img = 'storage/' . $filePath;
+//                }
+//                $category->save();
+//                DB::commit();
+//                return redirect()->back()->with('success', 'カテゴリーを更新しました。');
+//            } else {
+//                DB::rollBack();
+//                return redirect()->back()->with('error', 'カテゴリーが見つかりません。');
+//            }
+//        } catch (\Exception $e) {
+//            DB::rollback();
+//            Log::error($e);
+//            return redirect()->back()->with('error', 'カテゴリー更新中にエラーが発生しました。');
+//        }
+//    }
+//
+//    // [削除] カテゴリー
+//    public function DeleteCategory($id) {
+//        DB::beginTransaction();
+//        try {
+//            $category = Category::find($id);
+//            if ($category) {
+//                $oldImagePath = str_replace('storage/', '', $category->img);
+//                if (Storage::disk('public')->exists($oldImagePath)) {
+//                    Storage::disk('public')->delete($oldImagePath);
+//                }
+//                $category->delete();
+//                DB::commit();
+//                return redirect()->back()->with('success', 'カテゴリーを削除しました。');
+//            } else {
+//                DB::rollBack();
+//                return redirect()->back()->with('error', 'カテゴリーが見つかりません。');
+//            }
+//        } catch (\Exception $e) {
+//            DB::rollback();
+//            Log::error($e);
+//            return redirect()->back()->with('error', 'カテゴリー削除中にエラーが発生しました。');
+//        }
+//    }
+
+    // [ページ遷移] コンテンツ
+    function ShowContent() {
+        $contents = Content::orderBy('category_id', 'asc')->orderBy('order', 'asc')->get();
         $categories = Category::orderBy('order', 'asc')->get();
-        return view('admin.category', compact('categories'));
+        return view('admin.content', compact('contents', 'categories'));
     }
 
     // [追加] カテゴリー
     public function AddCategory(Request $request) {
         $validator = Validator::make($request->all(), [
+            'parent_id' => 'required',
             'name' => 'required',
             'img' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096',
         ], [], [
+            'parent_id' => '親カテゴリー',
             'name' => 'カテゴリー名',
             'img' => 'カテゴリー画像',
         ]);
@@ -33,6 +146,7 @@ class AdminController extends Controller {
         DB::beginTransaction();
         try {
             $category = new Category();
+            $category->parent_id = $request->parent_id;
             $category->name = $request->name;
             // 画像保存
             if ($request->hasFile('img')) {
@@ -53,9 +167,11 @@ class AdminController extends Controller {
     // [更新] カテゴリー
     public function UpdateCategory(Request $request, $id) {
         $validator = Validator::make($request->all(), [
+            'parent_id' => 'required',
             'name_' . $id => 'required',
             'img' => 'image|mimes:jpeg,png,jpg,gif|max:4096',
         ], [], [
+            'parent_id' => '親カテゴリー',
             'name_' . $id => 'カテゴリー名',
             'img' => 'カテゴリー画像',
         ]);
@@ -67,6 +183,9 @@ class AdminController extends Controller {
         try {
             $category = Category::find($id);
             if ($category) {
+                if ($request->has('parent_id')) {
+                    $category->parent_id = $request->parent_id;
+                }
                 if ($request->has('name_' . $id)) {
                     $category->name = $request->input('name_' . $id);
                 }
@@ -97,6 +216,33 @@ class AdminController extends Controller {
         }
     }
 
+    // [更新] カテゴリー順番
+    public function UpdateCategoryOrder(Request $request) {
+        Log::info($request->orderData);
+        DB::beginTransaction();
+        try {
+            foreach ($request->orderData as $key => $array) {
+                $category = Category::find($array['id']);
+                if ($category) {
+                    $category->order = $key + 1;
+                    $category->save();
+                }
+            }
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'カテゴリーの順番が正常に更新されました',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error($e);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'カテゴリーの順番を更新中にエラーが発生しました',
+            ]);
+        }
+    }
+
     // [削除] カテゴリー
     public function DeleteCategory($id) {
         DB::beginTransaction();
@@ -119,13 +265,6 @@ class AdminController extends Controller {
             Log::error($e);
             return redirect()->back()->with('error', 'カテゴリー削除中にエラーが発生しました。');
         }
-    }
-
-    // [ページ遷移] コンテンツ
-    function ShowContent() {
-        $contents = Content::orderBy('category_id', 'asc')->orderBy('order', 'asc')->get();
-        $categories = Category::orderBy('order', 'asc')->get();
-        return view('admin.content', compact('contents', 'categories'));
     }
 
     // [追加] コンテンツ
@@ -253,33 +392,6 @@ class AdminController extends Controller {
             return response()->json([
                 'status' => 'error',
                 'message' => '動画コンテンツの順番を更新中にエラーが発生しました',
-            ]);
-        }
-    }
-
-    // [更新] カテゴリー順番
-    public function UpdateCategoryOrder(Request $request) {
-        Log::info($request->orderData);
-        DB::beginTransaction();
-        try {
-            foreach ($request->orderData as $key => $array) {
-                $category = Category::find($array['id']);
-                if ($category) {
-                    $category->order = $key + 1;
-                    $category->save();
-                }
-            }
-            DB::commit();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'カテゴリーの順番が正常に更新されました',
-            ]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            Log::error($e);
-            return response()->json([
-                'status' => 'error',
-                'message' => 'カテゴリーの順番を更新中にエラーが発生しました',
             ]);
         }
     }

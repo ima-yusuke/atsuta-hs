@@ -1,6 +1,22 @@
 import '/resources/js/app.js';
 
-// アコーディオンの切り替え
+// categoryアコーディオンの切り替え
+document.querySelectorAll('.nested-category').forEach(button => {
+    button.addEventListener('click', () => {
+        const opened = button.querySelector('.opened');
+        const closed = button.querySelector('.closed');
+        const details = button.nextElementSibling;
+        const isClose = details.classList.contains('hidden');
+        opened.classList.toggle('hidden', !isClose);
+        closed.classList.toggle('hidden', isClose);
+        button.classList.toggle('mb-2', !isClose);
+        details.classList.toggle('mb-2', isClose);
+        details.classList.toggle('hidden', !isClose);
+        details.classList.toggle('flex', isClose);
+    });
+});
+
+// contentアコーディオンの切り替え
 document.querySelectorAll('.video-contents').forEach(button => {
     button.addEventListener('click', () => {
         const opened = button.querySelector('.opened');
@@ -20,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // カテゴリー切り替え
     const categoryItems = document.querySelectorAll(".category-item");
     const newContent = document.getElementById('new-content');
+    const newCategory = document.getElementById('new-category');
 
     categoryItems.forEach((item) => {
         item.addEventListener("click", () => {
@@ -48,9 +65,20 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             document.querySelectorAll('.nested-category').forEach(button => {
                 const parentCategoryId = button.getAttribute('data-parent-category-id');
+                const categoryDetails = button.nextElementSibling;
+                const show = document.querySelectorAll('.bi-chevron-down');
+                const none = document.querySelectorAll('.bi-chevron-up');
                 button.classList.remove('flex');
                 button.classList.add('hidden');
                 button.classList.add('mb-2');
+                categoryDetails.classList.add('hidden');
+                categoryDetails.classList.remove('mb-2');
+                show.forEach(icon => {
+                    icon.classList.remove('hidden');
+                });
+                none.forEach(icon => {
+                    icon.classList.add('hidden');
+                });
                 if (categoryId === parentCategoryId) {
                     button.classList.remove('hidden');
                     button.classList.add('flex');
@@ -58,8 +86,13 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             // 新規コンテンツの表示
             newContent.classList.add('hidden');
-            if (categoryId === 'new') {
+            if (categoryId === 'content-new') {
                 newContent.classList.remove('hidden');
+            }
+            // 新規カテゴリーの表示
+            newCategory.classList.add('hidden');
+            if (categoryId === 'category-new') {
+                newCategory.classList.remove('hidden');
             }
         });
     });

@@ -4,8 +4,12 @@
         <div id="selected-category" class="hidden" data-selected-category="{{ session('select_category') ?? '0' }}"></div>
         <div id="clicked-category" class="hidden" data-clicked-category="0"></div>
         <div class="side-nav md:fixed max-md:flex left-0 top-0 md:w-2/12 w-full md:h-[100dvh] h-20 md:mt-16 bg-white md:overflow-y-auto overflow-x-auto">
-            <div id="category-list-new" class="sticky top-0 left-0 category-item flex flex-col items-center md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="new">
-                <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">新規登録</p>
+            <div id="category-list-new" class="sticky top-0 left-0 category-item flex flex-col items-center md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="category-new">
+                <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">カテゴリー新規登録</p>
+            </div>
+            <div id="content-list-new" class="category-item flex flex-col items-center md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="content-new">
+                <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">コンテンツ新規登録</p>
+
             </div>
             <div id="category-list-0" class="sticky top-0 left-0 category-item flex flex-col md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="0">
                 <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">ルートカテゴリ</p>
@@ -42,8 +46,70 @@
                     </span>
                 </div>
             @endif
-            {{--新規登録--}}
-            <p id="category-title-new" class="hidden text-2xl font-bold text-start mb-8">動画コンテンツ追加</p>
+            {{--カテゴリー新規登録--}}
+            <p id="category-title-new" class="hidden text-2xl font-bold text-start mb-8">新規カテゴリー追加</p>
+            <div id="new-category" class="md:px-10 md:py-3 px-2 py-1 bg-white border-t border-solid">
+                @if ($errors->add->any())
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 my-4 rounded relative">
+                        <strong class="font-bold">入力された内容にエラーがあります。</strong>
+                    </div>
+                @endif
+                <form action="{{ route('AddCategory') }}" method="POST" enctype="multipart/form-data" class="flex max-md:flex-col w-full">
+                    @csrf
+                    <div class="flex flex-col w-full pb-4">
+                        <div class="flex flex-col w-full mt-3">
+                            <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
+                            <div class="flex flex-col w-full md:flex-row items-center mt-1">
+                                <label for="parent_id" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>親カテゴリー分類：</label>
+                                <select name="parent_id" id="parent_id" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2">
+                                    <option value="" selected disabled>親カテゴリーを選択してください</option>
+                                    <option value="0">ルートカテゴリ</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @error('parent_id', 'add')
+                            <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="flex flex-col w-full mt-3">
+                            <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
+                            <div class="flex flex-col w-full md:flex-row items-center mt-1">
+                                <label for="name" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>新規カテゴリー名：</label>
+                                <input type="text" name="name" id="name" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2" placeholder="新規カテゴリー名" value="{{ old('name') }}" />
+                            </div>
+                            @error('name', 'add')
+                            <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="flex flex-col w-full mt-3">
+                            <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
+                            <div class="flex flex-col md:flex-row items-center mt-1">
+                                <label for="img_new" class="w-40 pe-2 text-gray-900 text-nowrap">
+                                    <span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>
+                                    新規カテゴリー画像：
+                                </label>
+                                <input type="file" name="img" id="img_new"
+                                       class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            {{-- 新規カテゴリーの選択した画像 --}}
+                            <div id="preview-container_new" class="flex-col max-md:items-center w-full mt-3 hidden">
+                                <label class="text-gray-900 text-nowrap">選択した画像：</label>
+                                <img id="preview_new" src="" alt="選択した画像" class="w-60" />
+                            </div>
+                            @error('img', 'add')
+                            <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="w-full md:mt-auto flex justify-center items-center max-md:my-5">
+                        <button type="submit" class="border border-gray-900 h-full px-4 py-3 rounded-xl md:ms-auto md:me-10 md:mt-auto md:mb-4 me-3 hover:bg-gray-900 hover:text-white text-nowrap">追加</button>
+                    </div>
+                </form>
+            </div>
+            {{--コンテンツ新規登録--}}
+            <p id="content-title-new" class="hidden text-2xl font-bold text-start mb-8">新規動画コンテンツ追加</p>
             <div id="new-content" class="hidden md:px-10 md:py-3 px-2 py-1 bg-white border-t border-solid">
                 @if ($errors->add->any())
                     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 my-4 rounded relative">
@@ -56,7 +122,7 @@
                         <div class="flex flex-col w-full mt-3">
                             <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
                             <div class="flex flex-col w-full md:flex-row items-center mt-1">
-                                <label for="category_id" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>カテゴリー名：</label>
+                                <label for="category_id" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>カテゴリー分類：</label>
                                 <select name="category_id" id="category_id" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2">
                                     <option value="" selected disabled>カテゴリーを選択してください</option>
                                     @foreach($categories as $category)
@@ -121,7 +187,79 @@
                     <div id="{{ $category->id }}" class="sortable-item" data-sort-parent-id="{{ $category->parent_id }}">
                         <button class="hidden nested-category w-full text-left mb-2 px-10 py-6 font-bold text-xl bg-gray-300 hover:bg-gray-200" data-parent-category-id="{{ $category->parent_id }}">
                             <span class="w-full">{{ $category->name }}</span>
+                            <i class="bi bi-chevron-up opened hidden text-2xl md:me-10 self-center"></i>
+                            <i class="bi bi-chevron-down closed text-2xl md:me-10 self-center"></i>
                         </button>
+                        <div class="hidden category-details md:px-10 md:py-3 px-2 py-1 bg-white border-t border-solid flex-col @if ($errors->getBag('update' . $category->id)->has('name_' . $category->id) || $errors->getBag('update' . $category->id)->has('img')) has-error @endif">
+                            @if ($errors->getBag('update' . $category->id)->has('name_' . $category->id) || $errors->getBag('update' . $category->id)->has('img'))
+                                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 my-4 rounded relative">
+                                    <strong class="font-bold">入力された内容にエラーがあります。</strong>
+                                </div>
+                            @endif
+                            <form id="category-form-{{ $category->id }}" method="POST" enctype="multipart/form-data" class="flex max-md:flex-col w-full">
+                                @csrf
+                                <div class="flex flex-col w-full pb-4">
+                                    <div class="flex flex-col w-full mt-3">
+                                        <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
+                                        <div class="flex flex-col w-full md:flex-row items-center mt-1">
+                                            <label for="parent_id_{{ $category->id }}" class="w-40 pe-2 text-gray-900 text-nowrap">
+                                                <span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>
+                                                親カテゴリー分類：
+                                            </label>
+                                            <select name="parent_id" id="parent_id_{{ $category->id }}" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2">
+                                                <option value="0" {{ $category->parent_id == 0 ? 'selected' : '' }}>ルートカテゴリ</option>
+                                                @foreach($categories as $parentCategory)
+                                                    <option value="{{ $parentCategory->id }}" {{ $category->parent_id == $parentCategory->id ? 'selected' : '' }}>
+                                                        {{ $parentCategory->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        @error('parent_id', 'update' . $category->id)
+                                        <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div class="flex flex-col w-full mt-3">
+                                        <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
+                                        <div class="flex flex-col w-full md:flex-row items-center mt-1">
+                                            <label for="name_{{ $category->id }}" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>カテゴリー名：</label>
+                                            <input type="text" name="name_{{ $category->id }}" id="name_{{ $category->id }}" value="{{ old('name_' . $category->id, $category->name) }}" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2" />
+                                        </div>
+                                        @error('name_' . $category->id, 'update' . $category->id)
+                                        <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div class="flex flex-col w-full mt-3">
+                                        <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
+                                        <div class="flex flex-col w-full md:flex-row items-center mt-1">
+                                            <label for="img_{{ $category->id }}" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>カテゴリー画像：</label>
+                                            <input type="file" name="img" id="img_{{ $category->id }}" class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500" />
+                                        </div>
+                                        {{--画像プレビュー--}}
+                                        <div class="flex flex-col md:flex-row gap-4 justify-center mt-3">
+                                            {{-- 現在登録されている画像 --}}
+                                            <div class="flex flex-col max-md:items-center w-full mt-3">
+                                                <label class="text-gray-900 text-nowrap">現在の画像：</label>
+                                                <img src="{{ asset($category->img) }}" alt="{{ $category->name }}" class="w-60" />
+                                            </div>
+
+                                            {{-- 選択した画像 --}}
+                                            <div id="preview-container_{{ $category->id }}" class="flex-col max-md:items-center w-full mt-3 hidden">
+                                                <label class="text-gray-900 text-nowrap">選択した画像：</label>
+                                                <img id="preview_{{ $category->id }}" src="" alt="選択した画像" class="w-60" />
+                                            </div>
+                                        </div>
+                                        @error('img', 'update' . $category->id)
+                                        <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="w-full md:mt-auto flex justify-center items-center max-md:my-5">
+                                    <button type="button" data-action="{{ route('UpdateCategory', $category->id) }}" onclick="submitCategoryForm({{ $category->id }}, this)" class="update-btn border border-gray-900 h-full px-4 py-3 rounded-xl md:ms-auto md:me-10 md:mt-auto md:mb-4 me-3 hover:bg-gray-900 hover:text-white text-nowrap">更新</button>
+                                    <button type="button" data-action="{{ route('DeleteCategory', $category->id) }}" onclick="submitCategoryForm({{ $category->id }}, this)" class="delete-btn border border-gray-900 h-full px-4 py-3 rounded-xl md:me-10 md:mt-auto md:mb-4 ms-3 hover:bg-gray-900 hover:text-white text-nowrap">削除</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 @endforeach
             </div>
@@ -203,8 +341,8 @@
                                     </div>
                                 </div>
                                 <div class="w-full md:mt-auto flex justify-center items-center max-md:my-5">
-                                    <button type="button" data-action="{{ route('UpdateContent', $content->id) }}" onclick="submitForm({{ $content->id }}, this)" class="update-btn border border-gray-900 h-full px-4 py-3 rounded-xl md:ms-auto md:me-10 md:mt-auto md:mb-4 me-3 hover:bg-gray-900 hover:text-white text-nowrap">更新</button>
-                                    <button type="button" data-action="{{ route('DeleteContent', $content->id) }}" onclick="submitForm({{ $content->id }}, this)" class="delete-btn border border-gray-900 h-full px-4 py-3 rounded-xl md:me-10 md:mt-auto md:mb-4 ms-3 hover:bg-gray-900 hover:text-white text-nowrap">削除</button>
+                                    <button type="button" data-action="{{ route('UpdateContent', $content->id) }}" onclick="submitContentForm({{ $content->id }}, this)" class="update-btn border border-gray-900 h-full px-4 py-3 rounded-xl md:ms-auto md:me-10 md:mt-auto md:mb-4 me-3 hover:bg-gray-900 hover:text-white text-nowrap">更新</button>
+                                    <button type="button" data-action="{{ route('DeleteContent', $content->id) }}" onclick="submitContentForm({{ $content->id }}, this)" class="delete-btn border border-gray-900 h-full px-4 py-3 rounded-xl md:me-10 md:mt-auto md:mb-4 ms-3 hover:bg-gray-900 hover:text-white text-nowrap">削除</button>
                                 </div>
                             </form>
                         </div>
@@ -214,8 +352,22 @@
         </div>
     </div>
     <script>
-        function submitForm(contentId, button) {
+        function submitContentForm(contentId, button) {
             const form = document.getElementById(`content-form-${contentId}`);
+            form.action = button.getAttribute('data-action');
+            if (button.textContent.trim() === '削除') {
+                form.method = 'POST';
+                const methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = '_method';
+                methodInput.value = 'DELETE';
+                form.appendChild(methodInput);
+            }
+            form.submit();
+        }
+
+        function submitCategoryForm(categoryId, button) {
+            const form = document.getElementById(`category-form-${categoryId}`);
             form.action = button.getAttribute('data-action');
             if (button.textContent.trim() === '削除') {
                 form.method = 'POST';
