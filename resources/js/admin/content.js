@@ -115,15 +115,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // // カテゴリー選択時の初期表示
-    // const selectedCategoryId = document.getElementById('selected-category').getAttribute('data-selected-category');
-    // if (selectedCategoryId) {
-    //     const button = document.getElementById('category-list-' + selectedCategoryId);
-    //     button.click();
-    // } else {
-    //     const button = document.getElementById('category-list-0');
-    //     button.click();
-    // }
+    // カテゴリー選択時の初期表示
+    const selectedCategoryId = document.getElementById('clicked-category').getAttribute('data-clicked-category');
+    if (selectedCategoryId === '0') {
+        const button = document.getElementById('category-list-0');
+        button.click();
+    }
 
     // エラー時に該当アコーディオンを開く処理
     // const errorAccordions = document.querySelectorAll('.has-error');

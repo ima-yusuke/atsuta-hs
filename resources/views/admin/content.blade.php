@@ -1,7 +1,6 @@
 <x-app-layout>
     <div class="flex flex-col md:flex-row w-full pb-12">
         {{--カテゴリー選択--}}
-        <div id="selected-category" class="hidden" data-selected-category="{{ session('select_category') ?? '0' }}"></div>
         <div id="clicked-category" class="hidden" data-clicked-category="0"></div>
         <div class="side-nav md:fixed max-md:flex left-0 top-0 md:w-2/12 w-full md:h-[100dvh] h-20 md:mt-16 bg-white md:overflow-y-auto overflow-x-auto">
             <div id="category-list-new" class="category-item flex flex-col items-center md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="category-new">
@@ -352,6 +351,9 @@
     </div>
     <script>
         function submitContentForm(contentId, button) {
+            if (button.textContent.trim() === '削除' && !confirm('本当に削除しますか？\nこの操作は取り消せません。')) {
+                return; // キャンセルした場合は処理を中断
+            }
             const form = document.getElementById(`content-form-${contentId}`);
             form.action = button.getAttribute('data-action');
             if (button.textContent.trim() === '削除') {
@@ -366,6 +368,9 @@
         }
 
         function submitCategoryForm(categoryId, button) {
+            if (button.textContent.trim() === '削除' && !confirm('本当に削除しますか？\nこの操作は取り消せません。')) {
+                return; // キャンセルした場合は処理を中断
+            }
             const form = document.getElementById(`category-form-${categoryId}`);
             form.action = button.getAttribute('data-action');
             if (button.textContent.trim() === '削除') {
