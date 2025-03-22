@@ -33,15 +33,18 @@ document.querySelectorAll('.video-contents').forEach(button => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    // カテゴリー切り替え
     const categoryItems = document.querySelectorAll(".category-item");
-    const newContent = document.getElementById('new-content');
-    const newCategory = document.getElementById('new-category');
+    const newContent = document.getElementById('content-new');
+    const newCategory = document.getElementById('category-new');
+    const newContentTitle = document.getElementById('content-title-new');
+    const newCategoryTitle = document.getElementById('category-title-new');
 
+    // カテゴリー切り替え
     categoryItems.forEach((item) => {
         item.addEventListener("click", () => {
             // data-category-id属性からカテゴリーIDを取得
             const categoryId = item.getAttribute("data-category-id");
+            // コンテンツのアコーディオン
             document.querySelectorAll('.video-contents').forEach(button => {
                 const contentCategoryId = button.getAttribute('data-content-category-id');
                 const contentDetails = button.nextElementSibling;
@@ -63,6 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     button.classList.add('flex');
                 }
             });
+
+            // カテゴリーのアコーディオン
             document.querySelectorAll('.nested-category').forEach(button => {
                 const parentCategoryId = button.getAttribute('data-parent-category-id');
                 const categoryDetails = button.nextElementSibling;
@@ -84,15 +89,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     button.classList.add('flex');
                 }
             });
+
             // 新規コンテンツの表示
             newContent.classList.add('hidden');
+            newContentTitle.classList.add('hidden');
             if (categoryId === 'content-new') {
                 newContent.classList.remove('hidden');
+                newContentTitle.classList.remove('hidden');
             }
             // 新規カテゴリーの表示
             newCategory.classList.add('hidden');
+            newCategoryTitle.classList.add('hidden');
             if (categoryId === 'category-new') {
                 newCategory.classList.remove('hidden');
+                newCategoryTitle.classList.remove('hidden');
             }
         });
     });
@@ -105,33 +115,33 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // カテゴリー選択時の初期表示
-    const selectedCategoryId = document.getElementById('selected-category').getAttribute('data-selected-category');
-    if (selectedCategoryId) {
-        const button = document.getElementById('category-list-' + selectedCategoryId);
-        button.click();
-    } else {
-        const button = document.getElementById('category-list-0');
-        button.click();
-    }
+    // // カテゴリー選択時の初期表示
+    // const selectedCategoryId = document.getElementById('selected-category').getAttribute('data-selected-category');
+    // if (selectedCategoryId) {
+    //     const button = document.getElementById('category-list-' + selectedCategoryId);
+    //     button.click();
+    // } else {
+    //     const button = document.getElementById('category-list-0');
+    //     button.click();
+    // }
 
     // エラー時に該当アコーディオンを開く処理
-    const errorAccordions = document.querySelectorAll('.has-error');
-    if (errorAccordions.length > 0) {
-        errorAccordions.forEach(accordion => {
-            const button = accordion.previousElementSibling;
-            if (button) {
-                const icons = button.querySelectorAll('i');
-                icons.forEach(icon => icon.classList.toggle('hidden'));
-                button.classList.toggle('mb-2');
-            }
-            accordion.classList.toggle('hidden');
-            accordion.classList.toggle('flex');
-
-            // 最初のエラー箇所にスクロール移動
-            accordion.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    }
+    // const errorAccordions = document.querySelectorAll('.has-error');
+    // if (errorAccordions.length > 0) {
+    //     errorAccordions.forEach(accordion => {
+    //         const button = accordion.previousElementSibling;
+    //         if (button) {
+    //             const icons = button.querySelectorAll('i');
+    //             icons.forEach(icon => icon.classList.toggle('hidden'));
+    //             button.classList.toggle('mb-2');
+    //         }
+    //         accordion.classList.toggle('hidden');
+    //         accordion.classList.toggle('flex');
+    //
+    //         // 最初のエラー箇所にスクロール移動
+    //         accordion.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    //     });
+    // }
 
     // 画像のプレビュー
     function previewImage(event, id) {
@@ -186,22 +196,52 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".category-item").forEach((item) => {
         item.addEventListener("click", function (event) {
             event.stopPropagation(); // クリックイベントのバブリングを防ぐ
-
+            // console.log(item);
             let childrenContainer = this.querySelector(":scope > .child-categories"); // 直下の子要素
             if (childrenContainer) {
                 childrenContainer.classList.toggle("hidden");
             }
 
             // カテゴリーのハイライト表示
-            // const clickedCategoryElement = document.getElementById("clicked-category");
-            // console.log(clickedCategoryElement.dataset.clickedCategory);
-            // if (clickedCategoryElement) {
-            //     const clickedCategoryId = this.getAttribute("data-category-id");
-            //     console.log(clickedCategoryId);
-            //     const clickedCategory = document.getElementById("category-list-" + clickedCategoryId);
-            //     console.log(clickedCategory);
-            //     clickedCategory.style.backgroundColor = "#87cefa";
-            // }
+            const clickedCategoryId = item.getAttribute("data-category-id");
+            // console.log(clickedCategoryId);
+            if (clickedCategoryId === "0") {
+                document.querySelectorAll(".category-item").forEach((item) => {
+                    item.style.backgroundColor = "";
+                });
+                document.querySelectorAll(".category-item-title").forEach((item) => {
+                    item.style.backgroundColor = "";
+                });
+                const clickedCategory = document.getElementById("category-list-0");
+                clickedCategory.style.backgroundColor = "#d1e5ff";
+            } else if (clickedCategoryId === "category-new") {
+                document.querySelectorAll(".category-item").forEach((item) => {
+                    item.style.backgroundColor = "";
+                });
+                document.querySelectorAll(".category-item-title").forEach((item) => {
+                    item.style.backgroundColor = "";
+                });
+                const clickedCategory = document.getElementById("category-list-new");
+                clickedCategory.style.backgroundColor = "#d1e5ff";
+            } else if (clickedCategoryId === "content-new") {
+                document.querySelectorAll(".category-item").forEach((item) => {
+                    item.style.backgroundColor = "";
+                });
+                document.querySelectorAll(".category-item-title").forEach((item) => {
+                    item.style.backgroundColor = "";
+                });
+                const clickedCategory = document.getElementById("content-list-new");
+                clickedCategory.style.backgroundColor = "#d1e5ff";
+            } else {
+                document.querySelectorAll(".category-item").forEach((item) => {
+                    item.style.backgroundColor = "";
+                });
+                document.querySelectorAll(".category-item-title").forEach((item) => {
+                    item.style.backgroundColor = "";
+                });
+                const clickedCategory = document.getElementById("category-list-" + clickedCategoryId).firstElementChild;
+                clickedCategory.style.backgroundColor = "#d1e5ff";
+            }
         });
     });
 });
