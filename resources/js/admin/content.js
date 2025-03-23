@@ -39,72 +39,66 @@ document.addEventListener("DOMContentLoaded", () => {
     const newContentTitle = document.getElementById('content-title-new');
     const newCategoryTitle = document.getElementById('category-title-new');
 
-    // カテゴリー切り替え
-    categoryItems.forEach((item) => {
-        item.addEventListener("click", () => {
-            // data-category-id属性からカテゴリーIDを取得
-            const categoryId = item.getAttribute("data-category-id");
-            // コンテンツのアコーディオン
-            document.querySelectorAll('.video-contents').forEach(button => {
-                const contentCategoryId = button.getAttribute('data-content-category-id');
-                const contentDetails = button.nextElementSibling;
-                const show = document.querySelectorAll('.bi-chevron-down');
-                const none = document.querySelectorAll('.bi-chevron-up');
-                button.classList.remove('flex');
-                button.classList.add('hidden');
-                button.classList.add('mb-2');
-                contentDetails.classList.add('hidden');
-                contentDetails.classList.remove('mb-2');
-                show.forEach(icon => {
-                    icon.classList.remove('hidden');
-                });
-                none.forEach(icon => {
-                    icon.classList.add('hidden');
-                });
-                if (categoryId === contentCategoryId) {
-                    button.classList.remove('hidden');
-                    button.classList.add('flex');
-                }
-            });
+    // カテゴリーがクリックされたときの処理
+    function handleCategorySelection(item) {
+        // data-category-id属性からカテゴリーIDを取得
+        const categoryId = item.getAttribute("data-category-id");
 
-            // カテゴリーのアコーディオン
-            document.querySelectorAll('.nested-category').forEach(button => {
-                const parentCategoryId = button.getAttribute('data-parent-category-id');
-                const categoryDetails = button.nextElementSibling;
-                const show = document.querySelectorAll('.bi-chevron-down');
-                const none = document.querySelectorAll('.bi-chevron-up');
-                button.classList.remove('flex');
-                button.classList.add('hidden');
-                button.classList.add('mb-2');
-                categoryDetails.classList.add('hidden');
-                categoryDetails.classList.remove('mb-2');
-                show.forEach(icon => {
-                    icon.classList.remove('hidden');
-                });
-                none.forEach(icon => {
-                    icon.classList.add('hidden');
-                });
-                if (categoryId === parentCategoryId) {
-                    button.classList.remove('hidden');
-                    button.classList.add('flex');
-                }
-            });
+        // コンテンツのアコーディオン処理
+        toggleAccordion('.video-contents', 'data-content-category-id', categoryId);
 
-            // 新規コンテンツの表示
-            newContent.classList.add('hidden');
-            newContentTitle.classList.add('hidden');
-            if (categoryId === 'content-new') {
-                newContent.classList.remove('hidden');
-                newContentTitle.classList.remove('hidden');
-            }
-            // 新規カテゴリーの表示
-            newCategory.classList.add('hidden');
-            newCategoryTitle.classList.add('hidden');
-            if (categoryId === 'category-new') {
-                newCategory.classList.remove('hidden');
-                newCategoryTitle.classList.remove('hidden');
+        // カテゴリーのアコーディオン処理
+        toggleAccordion('.nested-category', 'data-parent-category-id', categoryId);
+
+        // 新規コンテンツの表示処理
+        toggleNewContentDisplay(categoryId);
+    }
+
+    // 汎用的なアコーディオンの切り替え関数
+    function toggleAccordion(selector, dataAttr, categoryId) {
+        document.querySelectorAll(selector).forEach(button => {
+            const contentCategoryId = button.getAttribute(dataAttr);
+            const contentDetails = button.nextElementSibling;
+            const showIcons = document.querySelectorAll('.bi-chevron-down');
+            const hideIcons = document.querySelectorAll('.bi-chevron-up');
+
+            button.classList.remove('flex');
+            button.classList.add('hidden', 'mb-2');
+            contentDetails.classList.add('hidden');
+            contentDetails.classList.remove('mb-2');
+
+            showIcons.forEach(icon => icon.classList.remove('hidden'));
+            hideIcons.forEach(icon => icon.classList.add('hidden'));
+
+            if (categoryId === contentCategoryId) {
+                button.classList.remove('hidden');
+                button.classList.add('flex');
             }
         });
+    }
+
+    // 新規コンテンツ・カテゴリーの表示切り替え関数
+    function toggleNewContentDisplay(categoryId) {
+        // 新規コンテンツ
+        newContent.classList.add('hidden');
+        newContentTitle.classList.add('hidden');
+        if (categoryId === 'content-new') {
+            newContent.classList.remove('hidden');
+            newContentTitle.classList.remove('hidden');
+        }
+
+        // 新規カテゴリー
+        newCategory.classList.add('hidden');
+        newCategoryTitle.classList.add('hidden');
+        if (categoryId === 'category-new') {
+            newCategory.classList.remove('hidden');
+            newCategoryTitle.classList.remove('hidden');
+        }
+    }
+
+    // カテゴリーの切り替え
+    document.querySelectorAll(".category-item").forEach(item => {
+        item.addEventListener("click", () => handleCategorySelection(item));
     });
 
     // 閉じるボタンのクリックイベント
@@ -117,9 +111,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // カテゴリー選択時の初期表示
     const selectedCategoryId = document.getElementById('clicked-category').getAttribute('data-clicked-category');
+    let targetElement;
     if (selectedCategoryId === '0') {
-        const button = document.getElementById('category-list-0');
-        button.click();
+        targetElement = document.getElementById('category-list-0');
+    } else if (selectedCategoryId === 'category_new') {
+        targetElement = document.getElementById('category-list-new');
+    } else if (selectedCategoryId === 'content_new') {
+        targetElement = document.getElementById('content-list-new');
+    } else {
+        targetElement = document.getElementById('category-list-' + selectedCategoryId);
+    }
+
+    if (targetElement) {
+        handleCategoryClick(new Event('click'), targetElement); // クリック処理の関数
+        handleCategorySelection(targetElement); // カテゴリー選択処理の関数
     }
 
     // エラー時に該当アコーディオンを開く処理
@@ -205,55 +210,48 @@ document.addEventListener("DOMContentLoaded", () => {
     // カテゴリーnavのアコーディオン
     document.querySelectorAll(".category-item").forEach((item) => {
         item.addEventListener("click", function (event) {
-            event.stopPropagation(); // クリックイベントのバブリングを防ぐ
-            // console.log(item);
-            let childrenContainer = this.querySelector(":scope > .child-categories"); // 直下の子要素
-            if (childrenContainer) {
-                childrenContainer.classList.toggle("hidden");
-            }
-
-            // カテゴリーのハイライト表示
-            const clickedCategoryId = item.getAttribute("data-category-id");
-            // console.log(clickedCategoryId);
-            if (clickedCategoryId === "0") {
-                document.querySelectorAll(".category-item").forEach((item) => {
-                    item.style.backgroundColor = "";
-                });
-                document.querySelectorAll(".category-item-title").forEach((item) => {
-                    item.style.backgroundColor = "";
-                });
-                const clickedCategory = document.getElementById("category-list-0");
-                clickedCategory.style.backgroundColor = "#d1e5ff";
-            } else if (clickedCategoryId === "category-new") {
-                document.querySelectorAll(".category-item").forEach((item) => {
-                    item.style.backgroundColor = "";
-                });
-                document.querySelectorAll(".category-item-title").forEach((item) => {
-                    item.style.backgroundColor = "";
-                });
-                const clickedCategory = document.getElementById("category-list-new");
-                clickedCategory.style.backgroundColor = "#d1e5ff";
-            } else if (clickedCategoryId === "content-new") {
-                document.querySelectorAll(".category-item").forEach((item) => {
-                    item.style.backgroundColor = "";
-                });
-                document.querySelectorAll(".category-item-title").forEach((item) => {
-                    item.style.backgroundColor = "";
-                });
-                const clickedCategory = document.getElementById("content-list-new");
-                clickedCategory.style.backgroundColor = "#d1e5ff";
-            } else {
-                document.querySelectorAll(".category-item").forEach((item) => {
-                    item.style.backgroundColor = "";
-                });
-                document.querySelectorAll(".category-item-title").forEach((item) => {
-                    item.style.backgroundColor = "";
-                });
-                const clickedCategory = document.getElementById("category-list-" + clickedCategoryId).firstElementChild;
-                clickedCategory.style.backgroundColor = "#d1e5ff";
-            }
+            handleCategoryClick(event, item);
         });
     });
+
+    function handleCategoryClick(event, item) {
+        event.stopPropagation(); // クリックイベントのバブリングを防ぐ
+
+        // 直下の子要素を取得して表示・非表示を切り替え
+        let childrenContainer = item.querySelector(":scope > .child-categories");
+        if (childrenContainer) {
+            childrenContainer.classList.toggle("hidden");
+        }
+
+        // カテゴリーのハイライト表示
+        highlightCategory(item.getAttribute("data-category-id"));
+    }
+
+    function highlightCategory(categoryId) {
+        // すべてのカテゴリースタイルをリセット
+        document.querySelectorAll(".category-item").forEach((item) => {
+            item.style.backgroundColor = "";
+        });
+        document.querySelectorAll(".category-item-title").forEach((item) => {
+            item.style.backgroundColor = "";
+        });
+
+        let clickedCategory;
+        if (categoryId === "0") {
+            clickedCategory = document.getElementById("category-list-0");
+        } else if (categoryId === "category-new") {
+            clickedCategory = document.getElementById("category-list-new");
+        } else if (categoryId === "content-new") {
+            clickedCategory = document.getElementById("content-list-new");
+        } else {
+            clickedCategory = document.getElementById("category-list-" + categoryId)?.firstElementChild;
+        }
+
+        if (clickedCategory) {
+            clickedCategory.style.backgroundColor = "#d1e5ff";
+        }
+    }
+
 });
 
 // コンテンツ並び替え処理

@@ -140,6 +140,7 @@ class AdminController extends Controller {
             'category_img_new' => 'カテゴリー画像',
         ]);
         if ($validator->fails()) {
+            session()->flash('selected_accordion', 'category_new');
             return redirect()->back()->withErrors($validator, 'add_category')->withInput();
         }
 
@@ -156,6 +157,7 @@ class AdminController extends Controller {
             $category->order = Category::max('order') + 1;
             $category->save();
             DB::commit();
+            session()->flash('selected_accordion', 'category_new');
             return redirect()->back()->with('success', 'カテゴリーを追加しました。');
         } catch (\Exception $e) {
             DB::rollback();
@@ -176,6 +178,8 @@ class AdminController extends Controller {
             'category_img_' . $id => 'カテゴリー画像',
         ]);
         if ($validator->fails()) {
+            $category = Category::find($id);
+            session()->flash('selected_accordion', $category->parent_id);
             return redirect()->back()->withErrors($validator, 'update_category_' . $id)->withInput();
         }
 
@@ -183,6 +187,7 @@ class AdminController extends Controller {
         try {
             $category = Category::find($id);
             if ($category) {
+                $prevParentId = $category->parent_id;
                 if ($request->has('parent_id')) {
                     $category->parent_id = $request->parent_id;
                 }
@@ -204,6 +209,7 @@ class AdminController extends Controller {
                 }
                 $category->save();
                 DB::commit();
+                session()->flash('selected_accordion', $prevParentId);
                 return redirect()->back()->with('success', 'カテゴリーを更新しました。');
             } else {
                 DB::rollBack();
@@ -281,6 +287,7 @@ class AdminController extends Controller {
             'content_img_new' => 'サムネイル画像',
         ]);
         if ($validator->fails()) {
+            session()->flash('selected_accordion', 'content_new');
             return redirect()->back()->withErrors($validator, 'add_content')->withInput();
         }
 
@@ -298,6 +305,7 @@ class AdminController extends Controller {
             $content->order = Content::max('order') + 1;
             $content->save();
             DB::commit();
+            session()->flash('selected_accordion', 'content_new');
             return redirect()->back()->with('success', '動画コンテンツを追加しました。');
         } catch (\Exception $e) {
             DB::rollback();
@@ -309,17 +317,19 @@ class AdminController extends Controller {
     // [更新] コンテンツ
     public function UpdateContent(Request $request, $id) {
         $validator = Validator::make($request->all(), [
-            'category_id_' . $id => 'required',
+            'category_id' => 'required',
             'content_name_' . $id => 'required',
             'content_url_' . $id => 'required',
             'content_img_' . $id => 'image|mimes:jpeg,png,jpg,gif|max:4096',
         ], [], [
-            'category_id_' .$id => 'カテゴリー',
+            'category_id' => 'カテゴリー',
             'content_name_' . $id => '動画名',
             'content_url_' . $id => '動画URL',
             'content_img_' . $id => 'サムネイル画像',
         ]);
         if ($validator->fails()) {
+            $content = Content::find($id);
+            session()->flash('selected_accordion', $content->category_id);
             return redirect()->back()->withErrors($validator, 'update_content_' . $id)->withInput();
         }
 
@@ -327,7 +337,8 @@ class AdminController extends Controller {
         try {
             $content = Content::find($id);
             if ($content) {
-                if ($request->has('category_id_' . $id)) {
+                if ($request->has('category_id')) {
+                    $prevCategoryId = $content->category_id;
                     $content->category_id = $request->category_id;
                 }
                 if ($request->has('content_name_' . $id)) {
@@ -351,6 +362,7 @@ class AdminController extends Controller {
                 }
                 $content->save();
                 DB::commit();
+                session()->flash('selected_accordion', $prevCategoryId);
                 return redirect()->back()->with('success', '動画コンテンツを更新しました。');
             } else {
                 DB::rollBack();

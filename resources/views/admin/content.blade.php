@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="flex flex-col md:flex-row w-full pb-12">
         {{--カテゴリー選択--}}
-        <div id="clicked-category" class="hidden" data-clicked-category="0"></div>
+        <div id="clicked-category" class="hidden" data-clicked-category="{{ session('selected_accordion') ?? '0' }}"></div>
         <div class="side-nav md:fixed max-md:flex md:w-2/12 w-full md:min-h-[100dvh] h-20 md:pt-16 bg-white md:overflow-y-auto overflow-x-auto">
             <div id="category-list-new" class="category-item flex flex-col items-center md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="category-new">
                 <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">カテゴリー新規登録</p>
@@ -188,8 +188,8 @@
                             <i class="bi bi-chevron-up opened hidden text-2xl md:me-10 self-center"></i>
                             <i class="bi bi-chevron-down closed text-2xl md:me-10 self-center"></i>
                         </button>
-                        <div class="hidden category-details md:px-10 md:py-3 px-2 py-1 bg-white border-t border-solid flex-col @if ($errors->getBag('update_category_' . $category->id)->has('parent_id') || $errors->getBag('update_category_' . $category->id)->has('category_name_' . $category->id) || $errors->getBag('update_category_' . $category->id)->has('img')) has-error @endif">
-                            @if ($errors->getBag('update_category_' . $category->id)->has('parent_id') || $errors->getBag('update_category_' . $category->id)->has('category_name_' . $category->id) || $errors->getBag('update_category_' . $category->id)->has('img'))
+                        <div class="hidden category-details md:px-10 md:py-3 px-2 py-1 bg-white border-t border-solid flex-col @if ($errors->getBag('update_category_' . $category->id)->has('parent_id') || $errors->getBag('update_category_' . $category->id)->has('category_name_' . $category->id) || $errors->getBag('update_category_' . $category->id)->has('category_img_' . $category->id)) has-error @endif">
+                            @if ($errors->getBag('update_category_' . $category->id)->has('parent_id') || $errors->getBag('update_category_' . $category->id)->has('category_name_' . $category->id) || $errors->getBag('update_category_' . $category->id)->has('category_img_' . $category->id))
                                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 my-4 rounded relative">
                                     <strong class="font-bold">入力された内容にエラーがあります。</strong>
                                 </div>
@@ -270,8 +270,8 @@
                             <i class="bi bi-chevron-up opened hidden text-2xl md:me-10 self-center"></i>
                             <i class="bi bi-chevron-down closed text-2xl md:me-10 self-center"></i>
                         </button>
-                        <div class="hidden content-details md:px-10 md:py-3 px-2 py-1 bg-white border-t border-solid flex-col @if ($errors->getBag('update_content_' . $content->id)->has('content_name_' . $content->id) || $errors->getBag('update_content_' . $content->id)->has('img') || $errors->getBag('update_content_' . $content->id)->has('content_url_' . $content->id) || $errors->getBag('update_content_' . $content->id)->has('category_id')) has-error @endif">
-                            @if ($errors->getBag('update_content_' . $content->id)->has('content_name_' . $content->id) || $errors->getBag('update_content_' . $content->id)->has('img') || $errors->getBag('update_content_' . $content->id)->has('content_url_' . $content->id) || $errors->getBag('update_content_' . $content->id)->has('category_id'))
+                        <div class="hidden content-details md:px-10 md:py-3 px-2 py-1 bg-white border-t border-solid flex-col @if ($errors->getBag('update_content_' . $content->id)->has('content_name_' . $content->id) || $errors->getBag('update_content_' . $content->id)->has('content_img_' . $content->id) || $errors->getBag('update_content_' . $content->id)->has('content_url_' . $content->id) || $errors->getBag('update_content_' . $content->id)->has('category_id')) has-error @endif">
+                            @if ($errors->getBag('update_content_' . $content->id)->has('content_name_' . $content->id) || $errors->getBag('update_content_' . $content->id)->has('content_img_' . $content->id) || $errors->getBag('update_content_' . $content->id)->has('content_url_' . $content->id) || $errors->getBag('update_content_' . $content->id)->has('category_id'))
                                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 my-4 rounded relative">
                                     <strong class="font-bold">入力された内容にエラーがあります。</strong>
                                 </div>
@@ -282,9 +282,10 @@
                                     <div class="flex flex-col w-full mt-3">
                                         <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
                                         <div class="flex flex-col w-full md:flex-row items-center mt-1">
-                                            <label for="category_id_{{ $content->category_id }}" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>カテゴリー名：</label>
-                                            <select name="category_id_{{ $content->category_id }}" id="category_id_{{ $content->category_id }}" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2">
-                                                @foreach($categories as $category)
+                                            <label for="category_id" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>カテゴリー名：</label>
+                                            <select name="category_id" id="category_id_{{ $content->category_id }}" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2">
+
+                                            @foreach($categories as $category)
                                                     <option value="{{ $category->id }}" {{ $content->category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                                 @endforeach
                                             </select>
