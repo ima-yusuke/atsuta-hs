@@ -168,15 +168,15 @@ class AdminController extends Controller {
     public function UpdateCategory(Request $request, $id) {
         $validator = Validator::make($request->all(), [
             'parent_id' => 'required',
-            'name_' . $id => 'required',
+            'category_name_' . $id => 'required',
             'img' => 'image|mimes:jpeg,png,jpg,gif|max:4096',
         ], [], [
             'parent_id' => '親カテゴリー',
-            'name_' . $id => 'カテゴリー名',
+            'category_name_' . $id => 'カテゴリー名',
             'img' => 'カテゴリー画像',
         ]);
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator, 'update' . $id)->withInput();
+            return redirect()->back()->withErrors($validator, 'update_category_' . $id)->withInput();
         }
 
         DB::beginTransaction();
@@ -186,8 +186,8 @@ class AdminController extends Controller {
                 if ($request->has('parent_id')) {
                     $category->parent_id = $request->parent_id;
                 }
-                if ($request->has('name_' . $id)) {
-                    $category->name = $request->input('name_' . $id);
+                if ($request->has('category_name_' . $id)) {
+                    $category->name = $request->input('category_name_' . $id);
                 }
                 // 画像更新
                 if ($request->hasFile('img')) {
@@ -309,32 +309,32 @@ class AdminController extends Controller {
     // [更新] コンテンツ
     public function UpdateContent(Request $request, $id) {
         $validator = Validator::make($request->all(), [
-            'category_id' => 'required',
-            'name_' . $id => 'required',
-            'url_' . $id => 'required',
+            'category_id_' . $id => 'required',
+            'content_name_' . $id => 'required',
+            'content_url_' . $id => 'required',
             'img' => 'image|mimes:jpeg,png,jpg,gif|max:4096',
         ], [], [
-            'category_id' => 'カテゴリー',
-            'name_' . $id => '動画名',
-            'url_' . $id => '動画URL',
+            'category_id_' .$id => 'カテゴリー',
+            'content_name_' . $id => '動画名',
+            'content_url_' . $id => '動画URL',
             'img' => 'サムネイル画像',
         ]);
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator, 'update' . $id)->withInput();
+            return redirect()->back()->withErrors($validator, 'update_content_' . $id)->withInput();
         }
 
         DB::beginTransaction();
         try {
             $content = Content::find($id);
             if ($content) {
-                if ($request->has('category_id')) {
+                if ($request->has('category_id_' . $id)) {
                     $content->category_id = $request->category_id;
                 }
-                if ($request->has('name_' . $id)) {
-                    $content->name = $request->input('name_' . $id);
+                if ($request->has('content_name_' . $id)) {
+                    $content->name = $request->input('content_name_' . $id);
                 }
-                if ($request->has('url_' . $id)) {
-                    $content->url = $request->input('url_' . $id);
+                if ($request->has('content_url_' . $id)) {
+                    $content->url = $request->input('content_url_' . $id);
                 }
                 // 画像更新
                 if ($request->hasFile('img')) {
