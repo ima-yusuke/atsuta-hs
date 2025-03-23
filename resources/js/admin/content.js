@@ -143,8 +143,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // 画像のプレビュー
     function previewImage(event, id) {
         const input = event.target;
-        const previewContainer = document.getElementById('preview-container_' + id);
-        const preview = document.getElementById('preview_' + id);
+        const previewContainer = document.getElementById(`preview-container_${id}`);
+        const preview = document.getElementById(`preview_${id}`);
+
+        if (!previewContainer || !preview) {
+            // console.error(`プレビュー要素が見つかりません: preview-container_${id}, preview_${id}`);
+            return;
+        }
 
         if (input.files && input.files[0]) {
             const reader = new FileReader();
@@ -163,10 +168,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelectorAll('input[type="file"]').forEach(input => {
         input.addEventListener('change', function (event) {
-            let id = input.getAttribute("id").replace("img_", "");
-            if (input.id === "img_new") {
-                id = "new";
+            let id = input.getAttribute("id");
+
+            if (input.name === "category_img_new") {
+                id = "category_new";  // category用の新規ID
+            } else if (input.name === "content_img_new") {
+                id = "content_new";  // content用の新規ID
+            } else if (input.name.startsWith("category_img_")) {
+                id = "category_" + id.replace("category_img_", ""); // 既存カテゴリー
+            } else if (input.name.startsWith("content_img_")) {
+                id = "content_" + id.replace("content_img_", ""); // 既存コンテンツ
             }
+            // console.log("プレビュー対象ID:", id);
             previewImage(event, id);
         });
     });
@@ -290,7 +303,7 @@ async function UpdateContentOrderRequest(url, orderData, draggedCategoryId) {
                     item.setAttribute("data-order", data.order);
                 }
             });
-            console.log("並び替えが完了しました！");
+            // console.log("並び替えが完了しました！");
         } else {
             console.error("並び替えの更新に失敗しました");
         }
@@ -313,7 +326,7 @@ async function UpdateCategoryOrderRequest(url, orderData) {
                     item.setAttribute("data-order", data.order);
                 }
             });
-            console.log("並び替えが完了しました！");
+            // console.log("並び替えが完了しました！");
         } else {
             console.error("並び替えの更新に失敗しました");
         }

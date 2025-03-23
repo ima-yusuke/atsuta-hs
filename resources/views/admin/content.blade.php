@@ -67,36 +67,36 @@
                                     @endforeach
                                 </select>
                             </div>
-                            @error('parent_id', 'add')
+                            @error('parent_id', 'add_category')
                             <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
                             @enderror
                         </div>
                         <div class="flex flex-col w-full mt-3">
                             <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
                             <div class="flex flex-col w-full md:flex-row items-center mt-1">
-                                <label for="name" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>新規カテゴリー名：</label>
-                                <input type="text" name="name" id="name" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2" placeholder="新規カテゴリー名" value="{{ old('name') }}" />
+                                <label for="category_name" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>新規カテゴリー名：</label>
+                                <input type="text" name="category_name" id="category_name" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2" placeholder="新規カテゴリー名" value="{{ old('category_name') }}" />
                             </div>
-                            @error('name', 'add')
+                            @error('category_name', 'add_category')
                             <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
                             @enderror
                         </div>
                         <div class="flex flex-col w-full mt-3">
                             <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
                             <div class="flex flex-col md:flex-row items-center mt-1">
-                                <label for="img_new" class="w-40 pe-2 text-gray-900 text-nowrap">
+                                <label for="category_img_new" class="w-40 pe-2 text-gray-900 text-nowrap">
                                     <span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>
                                     新規カテゴリー画像：
                                 </label>
-                                <input type="file" name="img" id="img_new"
+                                <input type="file" name="category_img_new" id="category_img_new"
                                        class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500">
                             </div>
                             {{-- 新規カテゴリーの選択した画像 --}}
-                            <div id="preview-container_new" class="flex-col max-md:items-center w-full mt-3 hidden">
+                            <div id="preview-container_category_new" class="flex-col max-md:items-center w-full mt-3 hidden">
                                 <label class="text-gray-900 text-nowrap">選択した画像：</label>
-                                <img id="preview_new" src="" alt="選択した画像" class="w-60" />
+                                <img id="preview_category_new" src="" alt="選択した画像" class="w-60" />
                             </div>
-                            @error('img', 'add')
+                            @error('category_img_new', 'add_category')
                             <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
                             @enderror
                         </div>
@@ -128,46 +128,46 @@
                                     @endforeach
                                 </select>
                             </div>
-                            @error('category_id', 'add')
+                            @error('category_id', 'add_content')
                             <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
                             @enderror
                         </div>
                         <div class="flex flex-col w-full mt-3">
                             <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
                             <div class="flex flex-col w-full md:flex-row items-center mt-1">
-                                <label for="name" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>新規動画名：</label>
-                                <input type="text" name="name" id="name" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2" placeholder="新規動画名" />
+                                <label for="content_name" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>新規動画名：</label>
+                                <input type="text" name="content_name" id="content_name" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2" placeholder="新規動画名" />
                             </div>
-                            @error('name', 'add')
+                            @error('content_name', 'add_content')
                             <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
                             @enderror
                         </div>
                         <div class="flex flex-col w-full mt-3">
                             <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
                             <div class="flex flex-col w-full md:flex-row items-center mt-1">
-                                <label for="url" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>新規動画URL：</label>
-                                <input type="text" name="url" id="url" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2" placeholder="新規動画URL" />
+                                <label for="content_url" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>新規動画URL：</label>
+                                <input type="text" name="content_url" id="content_url" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2" placeholder="新規動画URL" />
                             </div>
-                            @error('url', 'add')
+                            @error('content_url', 'add_content')
                             <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
                             @enderror
                         </div>
                         <div class="flex flex-col w-full mt-3">
                             <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
                             <div class="flex flex-col w-full md:flex-row items-center mt-1">
-                                <label for="img_new" class="w-40 pe-2 text-gray-900 text-nowrap">
+                                <label for="content_img_new" class="w-40 pe-2 text-gray-900 text-nowrap">
                                     <span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>
                                     新規サムネイル画像：
                                 </label>
-                                <input type="file" name="img" id="img_new" class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500">
+                                <input type="file" name="content_img_new" id="content_img_new" class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500">
                             </div>
 
                             {{-- 新規コンテンツの選択した画像 --}}
-                            <div id="preview-container_new" class="flex-col max-md:items-center w-full mt-3 hidden">
+                            <div id="preview-container_content_new" class="flex-col max-md:items-center w-full mt-3 hidden">
                                 <label class="text-gray-900 text-nowrap">選択した画像：</label>
-                                <img id="preview_new" src="" alt="選択した画像" class="w-60" />
+                                <img id="preview_content_new" src="" alt="選択した画像" class="w-60" />
                             </div>
-                            @error('img', 'add')
+                            @error('content_img_new', 'add_content')
                             <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
                             @enderror
                         </div>
@@ -230,10 +230,10 @@
                                     <div class="flex flex-col w-full mt-3">
                                         <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
                                         <div class="flex flex-col w-full md:flex-row items-center mt-1">
-                                            <label for="img_{{ $category->id }}" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>カテゴリー画像：</label>
-                                            <input type="file" name="img" id="img_{{ $category->id }}" class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500" />
+                                            <label for="category_img_{{ $category->id }}" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>カテゴリー画像：</label>
+                                            <input type="file" name="category_img_{{ $category->id }}" id="category_img_{{ $category->id }}" class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500" />
                                         </div>
-                                        @error('img', 'update_category_' . $category->id)
+                                        @error('category_img_' . $category->id, 'update_category_' . $category->id)
                                         <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
                                         @enderror
                                         {{--画像プレビュー--}}
@@ -245,9 +245,9 @@
                                             </div>
 
                                             {{-- 選択した画像 --}}
-                                            <div id="preview-container_{{ $category->id }}" class="flex-col max-md:items-center w-full mt-3 hidden">
+                                            <div id="preview-container_category_{{ $category->id }}" class="flex-col max-md:items-center w-full mt-3 hidden">
                                                 <label class="text-gray-900 text-nowrap">選択した画像：</label>
-                                                <img id="preview_{{ $category->id }}" src="" alt="選択した画像" class="w-60" />
+                                                <img id="preview_category_{{ $category->id }}" src="" alt="選択した画像" class="w-60" />
                                             </div>
                                         </div>
                                     </div>
@@ -316,10 +316,10 @@
                                     <div class="flex flex-col w-full mt-3">
                                         <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
                                         <div class="flex flex-col w-full md:flex-row items-center mt-1">
-                                            <label for="img_{{ $content->id }}" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>サムネイル画像：</label>
-                                            <input type="file" name="img" id="img_{{ $content->id }}" class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500" />
+                                            <label for="content_img_{{ $content->id }}" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>サムネイル画像：</label>
+                                            <input type="file" name="content_img_{{ $content->id }}" id="content_img_{{ $content->id }}" class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500" />
                                         </div>
-                                        @error('img', 'update_content_' . $content->id)
+                                        @error('content_img_' . $content->id, 'update_content_' . $content->id)
                                         <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>
                                         @enderror
                                         {{--画像プレビュー--}}
@@ -331,9 +331,9 @@
                                             </div>
 
                                             {{-- 選択した画像 --}}
-                                            <div id="preview-container_{{ $content->id }}" class="flex-col max-md:items-center w-full mt-3 hidden">
+                                            <div id="preview-container_content_{{ $content->id }}" class="flex-col max-md:items-center w-full mt-3 hidden">
                                                 <label class="text-gray-900 text-nowrap">選択した画像：</label>
-                                                <img id="preview_{{ $content->id }}" src="" alt="選択した画像" class="w-60" />
+                                                <img id="preview_content_{{ $content->id }}" src="" alt="選択した画像" class="w-60" />
                                             </div>
                                         </div>
                                     </div>

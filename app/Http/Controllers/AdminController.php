@@ -132,25 +132,25 @@ class AdminController extends Controller {
     public function AddCategory(Request $request) {
         $validator = Validator::make($request->all(), [
             'parent_id' => 'required',
-            'name' => 'required',
-            'img' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096',
+            'category_name' => 'required',
+            'category_img_new' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096',
         ], [], [
             'parent_id' => '親カテゴリー',
-            'name' => 'カテゴリー名',
-            'img' => 'カテゴリー画像',
+            'category_name' => 'カテゴリー名',
+            'category_img_new' => 'カテゴリー画像',
         ]);
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator, 'add')->withInput();
+            return redirect()->back()->withErrors($validator, 'add_category')->withInput();
         }
 
         DB::beginTransaction();
         try {
             $category = new Category();
             $category->parent_id = $request->parent_id;
-            $category->name = $request->name;
+            $category->name = $request->category_name;
             // 画像保存
-            if ($request->hasFile('img')) {
-                $filePath = $request->file('img')->store('img/categories', 'public');
+            if ($request->hasFile('category_img_new')) {
+                $filePath = $request->file('category_img_new')->store('img/categories', 'public');
                 $category->img = 'storage/' . $filePath;
             }
             $category->order = Category::max('order') + 1;
@@ -169,11 +169,11 @@ class AdminController extends Controller {
         $validator = Validator::make($request->all(), [
             'parent_id' => 'required',
             'category_name_' . $id => 'required',
-            'img' => 'image|mimes:jpeg,png,jpg,gif|max:4096',
+            'category_img_' . $id => 'image|mimes:jpeg,png,jpg,gif|max:4096',
         ], [], [
             'parent_id' => '親カテゴリー',
             'category_name_' . $id => 'カテゴリー名',
-            'img' => 'カテゴリー画像',
+            'category_img_' . $id => 'カテゴリー画像',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator, 'update_category_' . $id)->withInput();
@@ -190,7 +190,7 @@ class AdminController extends Controller {
                     $category->name = $request->input('category_name_' . $id);
                 }
                 // 画像更新
-                if ($request->hasFile('img')) {
+                if ($request->hasFile('category_img_' . $id)) {
                     // 既存の画像削除
                     if ($category->img) {
                         $oldImagePath = str_replace('storage/', '', $category->img);
@@ -199,7 +199,7 @@ class AdminController extends Controller {
                         }
                     }
                     // 新規の画像保存
-                    $filePath = $request->file('img')->store('img/categories', 'public');
+                    $filePath = $request->file('category_img_' . $id)->store('img/categories', 'public');
                     $category->img = 'storage/' . $filePath;
                 }
                 $category->save();
@@ -271,28 +271,28 @@ class AdminController extends Controller {
     public function AddContent(Request $request) {
         $validator = Validator::make($request->all(), [
             'category_id' => 'required',
-            'name' => 'required',
-            'url' => 'required',
-            'img' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096',
+            'content_name' => 'required',
+            'content_url' => 'required',
+            'content_img_new' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096',
         ], [], [
             'category_id' => 'カテゴリー名',
-            'name' => '動画名',
-            'url' => '動画URL',
-            'img' => 'サムネイル画像',
+            'content_name' => '動画名',
+            'content_url' => '動画URL',
+            'content_img_new' => 'サムネイル画像',
         ]);
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator, 'add')->withInput();
+            return redirect()->back()->withErrors($validator, 'add_content')->withInput();
         }
 
         DB::beginTransaction();
         try {
             $content = new Content();
             $content->category_id = $request->category_id;
-            $content->name = $request->name;
-            $content->url = $request->url;
+            $content->name = $request->content_name;
+            $content->url = $request->content_url;
             // 画像保存
-            if ($request->hasFile('img')) {
-                $filePath = $request->file('img')->store('img/contents', 'public');
+            if ($request->hasFile('content_img_new')) {
+                $filePath = $request->file('content_img_new')->store('img/contents', 'public');
                 $content->img = 'storage/' . $filePath;
             }
             $content->order = Content::max('order') + 1;
@@ -312,12 +312,12 @@ class AdminController extends Controller {
             'category_id_' . $id => 'required',
             'content_name_' . $id => 'required',
             'content_url_' . $id => 'required',
-            'img' => 'image|mimes:jpeg,png,jpg,gif|max:4096',
+            'content_img_' . $id => 'image|mimes:jpeg,png,jpg,gif|max:4096',
         ], [], [
             'category_id_' .$id => 'カテゴリー',
             'content_name_' . $id => '動画名',
             'content_url_' . $id => '動画URL',
-            'img' => 'サムネイル画像',
+            'content_img_' . $id => 'サムネイル画像',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator, 'update_content_' . $id)->withInput();
@@ -337,7 +337,7 @@ class AdminController extends Controller {
                     $content->url = $request->input('content_url_' . $id);
                 }
                 // 画像更新
-                if ($request->hasFile('img')) {
+                if ($request->hasFile('content_img_' . $id)) {
                     // 既存の画像削除
                     if ($content->img) {
                         $oldImagePath = str_replace('storage/', '', $content->img);
@@ -346,7 +346,7 @@ class AdminController extends Controller {
                         }
                     }
                     // 新規の画像保存
-                    $filePath = $request->file('img')->store('img/contents', 'public');
+                    $filePath = $request->file('content_img_' . $id)->store('img/contents', 'public');
                     $content->img = 'storage/' . $filePath;
                 }
                 $content->save();
