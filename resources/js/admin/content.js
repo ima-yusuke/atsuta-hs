@@ -114,12 +114,16 @@ document.addEventListener("DOMContentLoaded", () => {
     let targetElement;
     if (selectedCategoryId === '0') {
         targetElement = document.getElementById('category-list-0');
+        document.getElementById("category-title").textContent = targetElement.getAttribute('data-category-name');
     } else if (selectedCategoryId === 'category_new') {
         targetElement = document.getElementById('category-list-new');
+        document.getElementById("category-title").textContent = "";
     } else if (selectedCategoryId === 'content_new') {
         targetElement = document.getElementById('content-list-new');
+        document.getElementById("category-title").textContent = "";
     } else {
         targetElement = document.getElementById('category-list-' + selectedCategoryId);
+        document.getElementById("category-title").textContent = targetElement.getAttribute('data-category-name');
     }
 
     if (targetElement) {
@@ -207,10 +211,33 @@ document.addEventListener("DOMContentLoaded", () => {
         onSort: onCategorySortEvent
     });
 
+    // カテゴリー名を設定する関数
+    function updateCategoryTitle(categoryId) {
+        // カテゴリーIDに対応する要素を取得
+        const categoryItem = document.querySelector(`.category-item[data-category-id="${categoryId}"]`);
+
+        if (categoryId !== "category-new" && categoryId !== "content-new") {
+            // カテゴリー名を取得（例: `data-category-name` を追加）
+            const categoryName = categoryItem.getAttribute("data-category-name") || "カテゴリー名なし";
+
+            // カテゴリー名を表示
+            document.getElementById("category-title").textContent = categoryName;
+        } else {
+            // 新規カテゴリー・コンテンツの場合は空文字にする
+            document.getElementById("category-title").textContent = "";
+        }
+    }
+
     // カテゴリーnavのアコーディオン
     document.querySelectorAll(".category-item").forEach((item) => {
         item.addEventListener("click", function (event) {
             handleCategoryClick(event, item);
+
+            // クリックされたカテゴリーのIDを取得
+            const clickedCategoryId = item.getAttribute("data-category-id");
+
+            // カテゴリー名を更新
+            updateCategoryTitle(clickedCategoryId);
         });
     });
 

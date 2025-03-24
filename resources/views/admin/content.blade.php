@@ -3,13 +3,13 @@
         {{--カテゴリー選択--}}
         <div id="clicked-category" class="hidden" data-clicked-category="{{ session('selected_accordion') ?? '0' }}"></div>
         <div class="side-nav md:fixed max-md:flex md:w-2/12 w-full md:min-h-[100dvh] h-20 md:pt-16 bg-white md:overflow-y-auto overflow-x-auto">
-            <div id="category-list-new" class="category-item flex flex-col items-center md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="category-new">
+            <div id="category-list-new" class="category-item flex flex-col items-center md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="category-new" data-category-name="カテゴリー新規登録">
                 <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">カテゴリー新規登録</p>
             </div>
-            <div id="content-list-new" class="category-item flex flex-col items-center md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="content-new">
+            <div id="content-list-new" class="category-item flex flex-col items-center md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="content-new" data-category-name="動画コンテンツ新規登録">
                 <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">コンテンツ新規登録</p>
             </div>
-            <div id="category-list-0" class="category-item flex flex-col md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" style="background-color: #d1e5ff" data-category-id="0">
+            <div id="category-list-0" class="category-item flex flex-col md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" style="background-color: #d1e5ff" data-category-id="0" data-category-name="ルートカテゴリ">
                 <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">ルートカテゴリ</p>
             </div>
             @foreach($categories as $category)
@@ -178,7 +178,7 @@
                 </form>
             </div>
             {{--既存コンテンツ--}}
-            {{--<p id="category-title" class="text-2xl font-bold text-start mb-8"></p>--}}
+            <p id="category-title" class="text-2xl font-bold text-start mb-8"></p>
             <div id="sortable-category-list">
                 {{--カテゴリー一覧--}}
                 @foreach($categories as $category)

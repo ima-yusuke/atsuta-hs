@@ -224,7 +224,7 @@ class AdminController extends Controller {
 
     // [更新] カテゴリー順番
     public function UpdateCategoryOrder(Request $request) {
-        Log::info($request->orderData);
+//        Log::info($request->orderData);
         DB::beginTransaction();
         try {
             foreach ($request->orderData as $key => $array) {

@@ -1,4 +1,5 @@
-<div id="category-list-{{ $category->id }}" class="category-item block md:w-full md:border-t md:border-s-8 border-solid border-gray-300" data-category-id="{{ $category->id }}">
+<div id="category-list-{{ $category->id }}" class="category-item block md:w-full md:border-t md:border-s-8 border-solid border-gray-300" data-category-id="{{ $category->id }}" data-category-name="{{ $category->name }}">
+    {{-- カテゴリー名 --}}
     <p class="font-semibold category-item-title px-4 py-6 max-md:my-auto max-md:whitespace-nowrap md:border-b hover:bg-gray-200 cursor-pointer">{{ $category->name }}</p>
 
     {{-- 子カテゴリーがあればアコーディオン表示（最初は非表示） --}}
