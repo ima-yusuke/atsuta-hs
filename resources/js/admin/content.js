@@ -124,6 +124,23 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         targetElement = document.getElementById('category-list-' + selectedCategoryId);
         document.getElementById("category-title").textContent = targetElement.getAttribute('data-category-name');
+
+        let currentElement = targetElement;
+        while (currentElement) {
+            const parentId = currentElement.getAttribute('data-parent-category-id');
+            if (parentId === '0') {
+                break;
+            }
+            const parentElement = document.getElementById('category-list-' + parentId);
+            if (!parentElement) {
+                break;
+            }
+
+            handleCategoryClick(new Event('click'), parentElement); // クリック処理の関数
+            handleCategorySelection(parentElement); // カテゴリー選択処理の関数
+
+            currentElement = parentElement;
+        }
     }
 
     if (targetElement) {
