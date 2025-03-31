@@ -10,7 +10,7 @@ class MainController extends Controller
 
     public function ShowPage()
     {
-        $categories = Category::where('parent_id', 0)
+        $categories = Category::where('parent_id', null)
             ->with(['children', 'contents'])
             ->orderBy('order')
             ->get();

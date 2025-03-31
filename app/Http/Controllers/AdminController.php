@@ -131,11 +131,11 @@ class AdminController extends Controller {
     // [追加] カテゴリー
     public function AddCategory(Request $request) {
         $validator = Validator::make($request->all(), [
-            'parent_id' => 'required',
+//            'parent_id' => 'required',
             'category_name' => 'required',
             'category_img_new' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096',
         ], [], [
-            'parent_id' => '親カテゴリー',
+//            'parent_id' => '親カテゴリー',
             'category_name' => 'カテゴリー名',
             'category_img_new' => 'カテゴリー画像',
         ]);
@@ -169,11 +169,11 @@ class AdminController extends Controller {
     // [更新] カテゴリー
     public function UpdateCategory(Request $request, $id) {
         $validator = Validator::make($request->all(), [
-            'parent_id' => 'required',
+//            'parent_id' => 'required',
             'category_name_' . $id => 'required',
             'category_img_' . $id => 'image|mimes:jpeg,png,jpg,gif|max:4096',
         ], [], [
-            'parent_id' => '親カテゴリー',
+//            'parent_id' => '親カテゴリー',
             'category_name_' . $id => 'カテゴリー名',
             'category_img_' . $id => 'カテゴリー画像',
         ]);

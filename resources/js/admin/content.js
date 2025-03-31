@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let currentElement = targetElement;
         while (currentElement) {
             const parentId = currentElement.getAttribute('data-parent-category-id');
-            if (parentId === '0') {
+            if (parentId === null) {
                 break;
             }
             const parentElement = document.getElementById('category-list-' + parentId);

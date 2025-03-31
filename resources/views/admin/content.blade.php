@@ -9,11 +9,11 @@
             <div id="content-list-new" class="category-item flex flex-col items-center md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" data-category-id="content-new" data-category-name="動画コンテンツ新規登録">
                 <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">コンテンツ新規登録</p>
             </div>
-            <div id="category-list-0" class="category-item flex flex-col md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" style="background-color: #d1e5ff" data-category-id="0" data-category-name="ルートカテゴリ">
+            <div id="category-list-0" class="category-item flex flex-col md:w-full mx-auto md:px-2 md:py-6 px-6 py-2 md:border-y border-solid bg-white hover:bg-gray-200 cursor-pointer" style="background-color: #d1e5ff" data-category-id="{{ null }}" data-category-name="ルートカテゴリ">
                 <p class="font-semibold max-md:my-auto max-md:whitespace-nowrap">ルートカテゴリ</p>
             </div>
             @foreach($categories as $category)
-                @if($category->parent_id === 0)
+                @if($category->parent_id === null)
                     @include('components.category-item', ['category' => $category])
                 @endif
             @endforeach
@@ -61,7 +61,7 @@
                                 <label for="parent_id" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>親カテゴリー分類：</label>
                                 <select name="parent_id" id="parent_id" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2">
                                     <option value="" selected disabled>親カテゴリーを選択してください</option>
-                                    <option value="0">ルートカテゴリ</option>
+                                    <option value="{{ null }}">ルートカテゴリ</option>
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
@@ -182,7 +182,7 @@
             <div id="sortable-category-list">
                 {{--カテゴリー一覧--}}
                 @foreach($categories as $category)
-                    <div id="{{ $category->id }}" class="sortable-item" data-sort-parent-id="{{ $category->parent_id }}">
+                    <div id="{{ $category->id }}" class="sortable-item">
                         <button class="hidden nested-category w-full text-left mb-2 px-10 py-6 font-bold text-xl bg-gray-300 hover:bg-gray-200" data-parent-category-id="{{ $category->parent_id }}">
                             <span class="w-full">{{ $category->name }}</span>
                             <i class="bi bi-chevron-up opened hidden text-2xl md:me-10 self-center"></i>
@@ -205,7 +205,7 @@
                                                 親カテゴリー分類：
                                             </label>
                                             <select name="parent_id" id="parent_id_{{ $category->id }}" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2">
-                                                <option value="0" {{ $category->parent_id == 0 ? 'selected' : '' }}>ルートカテゴリ</option>
+                                                <option value="{{ null }}" {{ $category->parent_id == null ? 'selected' : '' }}>ルートカテゴリ</option>
                                                 @foreach($categories as $parentCategory)
                                                     <option value="{{ $parentCategory->id }}" {{ $category->parent_id == $parentCategory->id ? 'selected' : '' }}>
                                                         {{ $parentCategory->name }}
@@ -284,7 +284,6 @@
                                         <div class="flex flex-col w-full md:flex-row items-center mt-1">
                                             <label for="category_id" class="w-40 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>カテゴリー名：</label>
                                             <select name="category_id" id="category_id_{{ $content->category_id }}" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2">
-
                                             @foreach($categories as $category)
                                                     <option value="{{ $category->id }}" {{ $content->category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                                 @endforeach
