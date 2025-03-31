@@ -207,6 +207,9 @@
                                             <select name="parent_id" id="parent_id_{{ $category->id }}" class="lg:w-96 md:w-72 w-10/12 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500 block max-md:mt-3 p-2">
                                                 <option value="{{ null }}" {{ $category->parent_id == null ? 'selected' : '' }}>ルートカテゴリ</option>
                                                 @foreach($categories as $parentCategory)
+                                                    @if($category->id === $parentCategory->id)
+                                                        @continue
+                                                    @endif
                                                     <option value="{{ $parentCategory->id }}" {{ $category->parent_id == $parentCategory->id ? 'selected' : '' }}>
                                                         {{ $parentCategory->name }}
                                                     </option>
