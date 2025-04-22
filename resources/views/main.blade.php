@@ -93,6 +93,10 @@
         </h1>
     </section>
 
+    <p id="slide_text" class="float-y opacity-0 transition-opacity duration-500 text-6xl text-white fixed bottom-4 right-4">
+        →
+    </p>
+
     <script>
         let tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";

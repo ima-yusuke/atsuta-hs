@@ -12,6 +12,7 @@ let CategoryTitle = document.getElementById("category");
 const BackBtn = document.getElementById("close_contents_btn");
 const TopBtn = document.getElementById("back_top_btn");
 const SubNoContentsText = document.getElementById("sub_no_contents_text");
+const slideText = document.getElementById("slide_text");//スライドできますのテキスト
 let currentContainer = null;
 let subCategories = document.getElementsByClassName("sub-category");
 let subContents = document.getElementsByClassName("sub-content");
@@ -42,6 +43,7 @@ const categorySwiper = new Swiper('.categorySwiper', {
     },
 });
 
+
 // サブカテゴリーとコンテンツSwiperの初期化を関数化
 function initializeContentSwiper(className) {
     return new Swiper(className, {
@@ -52,7 +54,15 @@ function initializeContentSwiper(className) {
         },
         spaceBetween: 30, // 各スライド間のスペース
         loop: false, // 順番が崩れないように
+        // .swiperを横にスライドしたとき（slideChange イベント発火）
+        on: {
+            slideChange: function () {
+                if (slideText && !slideText.classList.contains('opacity-0')) {
+                    slideText.classList.add('opacity-0'); // フェードアウト
+                }
 
+            }
+        },
     });
 }
 
@@ -129,6 +139,15 @@ for (let i = 0; i < CategorySlide.length; i++) {
             HideSwiperSlide();
 
             ShowNextView(currentParentId); // 次のビューを表示
+
+            // スライドの数が6以上の場合、スライドできますのテキストを表示
+            let currentContents = document.getElementsByClassName("parent_id_" + currentParentId);
+            let contentsLength = currentContents.length;
+
+            if(contentsLength >6) {
+                slideText.classList.remove("opacity-0");
+            }
+
         }
     });
 }
@@ -147,6 +166,10 @@ TopBtn.addEventListener("click", async function () {
     SubNoContentsText.classList.add("hidden");
     subCategoryIdArray = [];
     HideSwiperSlide();
+    // 横にスライドできるのを明示する→を非表示
+    if (!slideText.classList.contains('opacity-0')) {
+        slideText.classList.add('opacity-0'); // フェードアウト
+    }
 
     await Sleep(1000); // さらに1秒待機
 
