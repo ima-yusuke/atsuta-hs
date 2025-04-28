@@ -24,7 +24,7 @@ export default defineConfig({
                 categoryCss: 'resources/css/category.css',
                 contentCss: 'resources/css/content.css',
                 main: 'resources/js/main.js',
-                particle: 'resources/js/particle.js',
+                loading: 'resources/js/loading.js',
                 screenSize: 'resources/js/screen-size.js',
                 adminCategory: 'resources/js/admin/category.js',
                 adminContent: 'resources/js/admin/content.js',
