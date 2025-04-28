@@ -24,6 +24,18 @@
 </head>
 
 <body class="flex justify-center items-center disable-click">
+    <div id="loadingScreen" style="
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: white;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+    ">
+        <div class="spinner"></div>
+    </div>
 
     <div class="w-full h-full absolute" style="background-image: url({{asset("storage/img/bg-img.jpeg")}}); background-size: cover; background-position: bottom;"></div>
 
@@ -191,6 +203,46 @@
             const match = url.match(regex);
             return match ? match[1] : null;
         }
+
+        window.addEventListener('load', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const images = document.querySelectorAll('img');
+            let loadedCount = 0;
+
+            // すべてのimg要素に対してチェック
+            images.forEach((img) => {
+                if (img.complete) {
+                    // すでに読み込み済み
+                    loadedCount++;
+                } else {
+                    img.addEventListener('load', () => {
+                        loadedCount++;
+                        if (loadedCount === images.length) {
+                            hideLoadingScreen();
+                        }
+                    });
+                    img.addEventListener('error', () => {
+                        loadedCount++;
+                        if (loadedCount === images.length) {
+                            hideLoadingScreen();
+                        }
+                    });
+                }
+            });
+
+            // もし最初から全部読み込み済みならすぐに隠す
+            if (loadedCount === images.length) {
+                hideLoadingScreen();
+            }
+
+            function hideLoadingScreen() {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500); // フェードアウト完了後に非表示
+            }
+        });
+
     </script>
     {{--    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/preset-links@3/tsparticles.preset.links.bundle.min.js"></script>--}}
 </body>
