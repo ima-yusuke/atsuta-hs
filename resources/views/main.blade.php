@@ -81,7 +81,7 @@
     <section id="animation_container" class="hidden justify-center items-center h-full w-full">
         <div class="flex flex-col justify-center items-center">
             <p class="text-center"></p>
-            <img src="{{asset("storage/img/pic-01.jpg")}}" />
+            <img src="{{asset("storage/img/bg-img.jpeg")}}" />
         </div>
     </section>
 
