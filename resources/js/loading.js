@@ -8,30 +8,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     images.forEach((img) => {
         if (img.complete) {
+            // すでにロード済みの画像
             loadedCount++;
             updateLoadingText();
         } else {
-            img.addEventListener('load', () => {
-                loadedCount++;
-                updateLoadingText();
-                checkAllLoaded();
-            });
-            img.addEventListener('error', () => {
-                loadedCount++;
-                updateLoadingText();
-                checkAllLoaded();
-            });
+            img.addEventListener('load', handleImageLoad);
+            img.addEventListener('error', handleImageLoad);
         }
     });
 
-    function updateLoadingText() {
-        loadingText.textContent = 'Loading... (' + loadedCount + '/' + images.length + ')';
+    // すべてロード済みか一度チェック
+    if (loadedCount === images.length) {
+        hideLoadingScreen();
     }
 
-    function checkAllLoaded() {
+    function handleImageLoad() {
+        loadedCount++;
+        updateLoadingText();
         if (loadedCount === images.length) {
             hideLoadingScreen();
         }
+    }
+
+    function updateLoadingText() {
+        loadingText.textContent = 'Loading... (' + loadedCount + '/' + images.length + ')';
     }
 
     function hideLoadingScreen() {
