@@ -1,14 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     const loadingScreen = document.getElementById('loadingScreen');
-    const images = document.querySelectorAll('img');
     const loadingText = document.getElementById('loading_text');
+    const images = document.querySelectorAll('img');
     let loadedCount = 0;
+    const totalCount = images.length;
+    let windowLoaded = false;
+    let fakeProgress = 0;
 
+    // 最初に表示
     updateLoadingText();
 
     images.forEach((img) => {
         if (img.complete) {
-            // すでにロード済みの画像
             loadedCount++;
             updateLoadingText();
         } else {
@@ -17,21 +20,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // すべてロード済みか一度チェック
-    if (loadedCount === images.length) {
-        hideLoadingScreen();
-    }
-
     function handleImageLoad() {
         loadedCount++;
         updateLoadingText();
-        if (loadedCount === images.length) {
-            hideLoadingScreen();
-        }
     }
 
+    window.addEventListener('load', function() {
+        windowLoaded = true;
+        fakeProgress = 100;
+        updateLoadingText();
+        hideLoadingScreen();
+    });
+
     function updateLoadingText() {
-        loadingText.textContent = 'Loading... (' + loadedCount + '/' + images.length + ')';
+        let percent = Math.round((loadedCount / totalCount) * 90); // 90%までimgで進める
+        if (windowLoaded) {
+            percent = 100; // windowがload完了したら100%
+        }
+        loadingText.textContent = `Loading... ${percent}%`;
     }
 
     function hideLoadingScreen() {
