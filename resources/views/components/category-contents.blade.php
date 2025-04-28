@@ -17,8 +17,25 @@
 @endforeach
 
 {{--コンテンツ--}}
+{{--@foreach($contents as $content)--}}
+{{--    <div class="parent_id_{{$parent_id}} !hidden swiper-slide video-container sub-content relative overflow-hidden">--}}
+{{--        <img--}}
+{{--            src="{{ asset($content['img'])}}"--}}
+{{--            alt="Video Thumbnail"--}}
+{{--            class="thumbnail object-cover m-auto w-full h-full cursor-pointer absolute top-0 left-0 z-10"--}}
+{{--            onclick="playVideo(this)"--}}
+{{--        >--}}
+
+{{--        <!-- YouTube Player -->--}}
+{{--        <div class="youtubePlayer w-full h-auto" data-id="{{$content["id"]}}" data-url="{{$content['url']}}" style="display: none;"></div>--}}
+
+{{--    </div>--}}
+{{--@endforeach--}}
+
 @foreach($contents as $content)
-    <div class="parent_id_{{$parent_id}} !hidden swiper-slide video-container sub-content relative overflow-hidden">--}}
+    <div class="parent_id_{{$parent_id}} !hidden swiper-slide video-container sub-content relative overflow-hidden">
+
+        <!-- サムネイル -->
         <img
             src="{{ asset($content['img'])}}"
             alt="Video Thumbnail"
@@ -26,11 +43,24 @@
             onclick="playVideo(this)"
         >
 
-        <!-- YouTube Player -->--}}
-        <div class="youtubePlayer w-full h-auto" data-id="{{$content["id"]}}" data-url="{{$content['url']}}" style="display: none;"></div>
+        <!-- YouTube + ボタンを包むdivを追加 -->
+        <div class="youtubeWrapper relative w-full h-auto" style="display: none;">
+
+            <!-- YouTube Player -->
+            <div class="youtubePlayer w-full h-auto" data-id="{{$content["id"]}}" data-url="{{$content['url']}}"></div>
+
+            <!-- 重ねるボタン -->
+            <button
+                class="absolute top-4 right-4 z-20 bg-red-500 text-white px-4 py-2 rounded-xl shadow"
+            >
+                閉じる
+            </button>
+
+        </div>
 
     </div>
 @endforeach
+
 
 {{--さらに子カテゴリがある場合、再帰的に呼び出し--}}
 @foreach($categories as $category)

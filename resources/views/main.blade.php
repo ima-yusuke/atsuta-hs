@@ -104,7 +104,7 @@
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         let playerArray = [];
-        let thumbnailImgElement = null;
+
 
         function onYouTubeIframeAPIReady() {
             const elements = document.querySelectorAll('.youtubePlayer');
@@ -118,47 +118,74 @@
                     videoId: getYouTubeVideoId(url), // 動画 ID を取得
                     playerVars: {
                         enablejsapi: 1,   // API を有効化
-                        controls: 0,      // コントロールバーを非表示にする
+                        controls: 1,      // コントロールバーを非表示にする
                         rel: 0,           // 終了時に関連動画を表示しない
-                    },
-                    events: {
-                        'onStateChange': (event) => onPlayerStateChange(event, player),
-                    },
+                    }
                 });
                 playerArray.push({"player":player,"id":element.getAttribute('data-id')});
             });
 
         }
 
-        function onPlayerStateChange(event,player) {
-            if (event.data === YT.PlayerState.PLAYING) { // 再生開始時
-                const iframe = player.getIframe(); // プレイヤーの iframe 要素を取得
-
-                if (iframe.requestFullscreen) {
-                    iframe.requestFullscreen(); // フルスクリーンモードに切り替え
-                }
-            }else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
-                // 再生停止または終了時にフルスクリーン解除
-                document.exitFullscreen();
-                thumbnailImgElement.style.display = 'block';
-                thumbnailImgElement.nextElementSibling.style.display = 'none';
-                player.seekTo(0, true); // 動画を最初の0秒
-            }
-        }
-
         function playVideo(imgElement) {
-            thumbnailImgElement = imgElement;
-            const youtubePlayer = imgElement.nextElementSibling;
-            imgElement.style.display = 'none';
+
+            //youtube wrapperで動画とボタンを包む
+            const youtubeWrapper = imgElement.nextElementSibling;
+            //youtube動画
+            const youtubePlayer = youtubeWrapper.firstElementChild;
+            //閉じるボタン
+            const closeBtn = youtubeWrapper.lastElementChild;
+
+            // Youtube動画wrapperを表示（動画再生は下記forループで行う）
+            youtubeWrapper.style.display = 'block';
             youtubePlayer.style.display = 'block';
+            closeBtn.style.display = 'block';
+            imgElement.style.display = 'none';//サムネ画像非表示
+
+            //再生する動画のインデックスを保存（closeBtnで使用するため）
+            let idx = null;
+
+            // フルスクリーンにして、再生する処理
             for (let i = 0; i < playerArray.length; i++) {
-                if (playerArray[i]["player"].options.videoId===getYouTubeVideoId(youtubePlayer.getAttribute('data-url')) &&playerArray[i]["id"]===youtubePlayer.getAttribute('data-id')) {
-                    youtubePlayer.requestFullscreen();
+                if (playerArray[i]["player"].options.videoId === getYouTubeVideoId(youtubePlayer.getAttribute('data-url')) &&
+                    playerArray[i]["id"] === youtubePlayer.getAttribute('data-id')) {
+
+                    // フルスクリーンにする
+                    if (youtubeWrapper.requestFullscreen) {
+                        youtubeWrapper.requestFullscreen().then(() => {
+                            // フルスクリーンに成功したら、iframeも100%にする
+                            youtubePlayer.style.width = '100%';
+                            youtubePlayer.style.height = '100%';
+                        });
+                    }
+
+                    idx = i;
+
+                    // 動画を再生
                     playerArray[i]["player"].playVideo();
                 }
             }
+
+            // 閉じるボタンのクリックイベント
+            closeBtn.addEventListener('click', function() {
+                // 動画を停止
+                playerArray[idx]["player"].pauseVideo();
+                // 動画を最初の0秒
+                playerArray[idx]["player"].seekTo(0, true);
+
+                youtubeWrapper.style.display = 'none';
+                imgElement.style.display = 'block';
+                youtubePlayer.style.display = 'none';
+                closeBtn.style.display = 'none';
+
+                // フルスクリーン解除
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                }
+            });
         }
 
+        // YouTubeの動画IDを取得する関数
         function getYouTubeVideoId(url) {
             const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/;
             const match = url.match(regex);
