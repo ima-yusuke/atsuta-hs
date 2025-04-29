@@ -119,7 +119,14 @@
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         let playerArray = [];
-
+        //youtube wrapperで動画とボタンを包む
+        let youtubeWrapper = null;
+        //youtube動画
+        let youtubePlayer = null;
+        //閉じるボタン
+        let closeBtn = null;
+        //再生する動画のインデックスを保存（closeBtnで使用するため）
+        let idx = null;
 
         function onYouTubeIframeAPIReady() {
             const elements = document.querySelectorAll('.youtubePlayer');
@@ -135,6 +142,7 @@
                         enablejsapi: 1,   // API を有効化
                         controls: 1,      // コントロールバーを非表示にする
                         rel: 0,           // 終了時に関連動画を表示しない
+                        fs:0              // フルスクリーンボタンを非表示にする
                     }
                 });
                 playerArray.push({"player":player,"id":element.getAttribute('data-id')});
@@ -145,20 +153,14 @@
         function playVideo(imgElement) {
 
             //youtube wrapperで動画とボタンを包む
-            const youtubeWrapper = imgElement.nextElementSibling;
+            youtubeWrapper = imgElement.nextElementSibling;
             //youtube動画
-            const youtubePlayer = youtubeWrapper.firstElementChild;
+            youtubePlayer = youtubeWrapper.firstElementChild;
             //閉じるボタン
-            const closeBtn = youtubeWrapper.lastElementChild;
+            closeBtn = youtubeWrapper.lastElementChild;
 
             // Youtube動画wrapperを表示（動画再生は下記forループで行う）
-            youtubeWrapper.style.display = 'block';
-            youtubePlayer.style.display = 'block';
-            closeBtn.style.display = 'block';
-            imgElement.style.display = 'none';//サムネ画像非表示
-
-            //再生する動画のインデックスを保存（closeBtnで使用するため）
-            let idx = null;
+            showVideoWrapper(imgElement)
 
             // フルスクリーンにして、再生する処理
             for (let i = 0; i < playerArray.length; i++) {
@@ -183,21 +185,42 @@
 
             // 閉じるボタンのクリックイベント
             closeBtn.addEventListener('click', function() {
-                // 動画を停止
-                playerArray[idx]["player"].pauseVideo();
-                // 動画を最初の0秒
-                playerArray[idx]["player"].seekTo(0, true);
+                resetVideo(imgElement)
 
-                youtubeWrapper.style.display = 'none';
-                imgElement.style.display = 'block';
-                youtubePlayer.style.display = 'none';
-                closeBtn.style.display = 'none';
-
-                // フルスクリーン解除
+                // 前回のフルスクリーンが解除されていない状態で再度requestFullscreen()をするとブラウザは動かないため
+                // フルスクリーンを解除
                 if (document.fullscreenElement) {
                     document.exitFullscreen();
                 }
             });
+
+            // フルスクリーンが解除されたときの処理（YouTubeで見るを押したとき自動でフルスクリーン解除なる）
+            document.addEventListener('fullscreenchange', function() {
+                if (!document.fullscreenElement) {
+                    resetVideo(imgElement)
+                }
+            });
+        }
+
+        // 動画wrapperを表示する関数（再生はここではしない）
+        function showVideoWrapper(imgElement){
+            youtubeWrapper.style.display = 'block';
+            youtubePlayer.style.display = 'block';
+            closeBtn.style.display = 'block';
+            imgElement.style.display = 'none';//サムネ画像非表示
+        }
+
+        // 動画を停止し、サムネ画像を表示する関数
+        function resetVideo(imgElement){
+            // 動画を停止
+            playerArray[idx]["player"].pauseVideo();
+            // 動画を最初の0秒
+            playerArray[idx]["player"].seekTo(0, true);
+
+            youtubeWrapper.style.display = 'none';
+            imgElement.style.display = 'block';
+            youtubePlayer.style.display = 'none';
+            closeBtn.style.display = 'none';
         }
 
         // YouTubeの動画IDを取得する関数
@@ -206,8 +229,6 @@
             const match = url.match(regex);
             return match ? match[1] : null;
         }
-
-
 
     </script>
     {{--    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/preset-links@3/tsparticles.preset.links.bundle.min.js"></script>--}}
