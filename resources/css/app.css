@@ -124,16 +124,16 @@ a.btn-switch2:hover span {
 
 /* 画像にアニメーションを適用するクラス */
 .btn-fade-out {
-    animation: btnFadeOut 1.5s ease-out forwards; /* 1.5秒で拡大・フェードアウト */
+    animation: btnFadeOut 1s ease-out forwards; /* 1.5秒で拡大・フェードアウト */
 }
 
 /*横にスライド出来るよう明示するための矢印*/
 @keyframes floatY {
     0%, 100% {
-        transform: translateY(0);
+        transform: translateX(0);
     }
     50% {
-        transform: translateY(-8px);
+        transform: translateX(-30px);
     }
 }
 
