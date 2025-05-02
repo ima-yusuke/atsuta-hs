@@ -148,6 +148,11 @@ for (let i = 0; i < CategorySlide.length; i++) {
                 slideText.classList.remove("opacity-0");
             }
 
+            // スライドできますの→をクリックしたとき、横にスライド
+            document.getElementById('slide_text').addEventListener('click', function () {
+                contentSwiper.slideNext();  // 次のスライドへ
+            });
+
         }
     });
 }
