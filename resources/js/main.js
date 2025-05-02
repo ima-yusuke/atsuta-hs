@@ -149,7 +149,7 @@ for (let i = 0; i < CategorySlide.length; i++) {
             }
 
             // スライドできますの→をクリックしたとき、横にスライド
-            document.getElementById('slide_text').addEventListener('click', function () {
+            slideText.addEventListener('click', function () {
                 contentSwiper.slideNext();  // 次のスライドへ
             });
 
@@ -395,6 +395,15 @@ function ShowNextView(id) {
     // swiperのリセット
     if (!contentSwiper.destroyed) {
         contentSwiper.destroy(true, true); // 破棄時にHTMLやCSSをリセット
+    }
+
+    let currentContents = document.getElementsByClassName("parent_id_" + id);
+    let contentsLength = currentContents.length;
+
+    if(contentsLength >6) {
+        slideText.classList.remove("opacity-0");
+    }else{
+        slideText.classList.add("opacity-0");
     }
 
     contentSwiper = initializeContentSwiper(`.swiper-${currentParentId}`);
