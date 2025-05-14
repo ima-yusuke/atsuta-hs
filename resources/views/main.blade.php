@@ -108,8 +108,8 @@
         </h1>
     </section>
 
-    <p id="slide_text" class="bg-white rounded-full p-3 float-y opacity-0 transition-opacity duration-500 text-6xl text-black font-bold fixed bottom-4 right-4">
-        →
+    <p id="slide_text" class="bg-white rounded-xl p-3 float-y opacity-0 transition-opacity duration-500 text-2xl text-black font-bold fixed bottom-4 right-4">
+        右にスライドできます→
     </p>
 
     <script>
@@ -229,6 +229,8 @@
             const match = url.match(regex);
             return match ? match[1] : null;
         }
+
+        console.log(@json($categories));
 
     </script>
     {{--    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/preset-links@3/tsparticles.preset.links.bundle.min.js"></script>--}}

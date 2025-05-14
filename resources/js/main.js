@@ -376,12 +376,12 @@ for (let i = 0; i < subCategories.length; i++) {
 
 // サブカテゴリーをクリックし、次のコンテンツとサブコンテンツを表示
 function ShowNextView(id) {
-
     let categories_contents_data = document.getElementsByClassName("parent_id_" + id);
 
     // サブカテゴリーもコンテンツもない場合、no contentsを表示
     if (categories_contents_data.length === 0) {
         SubNoContentsText.classList.remove("hidden");//no contentsテキスト要素
+        slideText.classList.add("opacity-0");
         return;
     }
 
