@@ -13,9 +13,7 @@
             >
         </aside>
     </div>
-
 @endforeach
-
 {{--コンテンツ--}}
 {{--@foreach($contents as $content)--}}
 {{--    <div class="parent_id_{{$parent_id}} !hidden swiper-slide video-container sub-content relative overflow-hidden">--}}
@@ -62,9 +60,10 @@
 @endforeach
 
 
-{{--さらに子カテゴリがある場合、再帰的に呼び出し--}}
+{{--さらに子カテゴリもしくは子コンテンツがある場合、再帰的に呼び出し--}}
 @foreach($categories as $category)
-    @if($category->children->isNotEmpty())
+    @if($category->children->isNotEmpty() || $category->contents->isNotEmpty())
+        {{--子カテゴリがある場合、再帰的に呼び出し--}}
         @include('components.category-contents', ['parent_id'=>$category->id,'categories' => $category->children,'contents'=>$category->contents])
     @endif
 @endforeach
