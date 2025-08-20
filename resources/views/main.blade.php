@@ -50,7 +50,7 @@
 
     {{--ヘッダー--}}
     <div class="fixed top-0 w-full flex items-center justify-center min-h-[8dvh]">
-        <h1 class="text-2xl text-white font-bold absolute left-[4%] top-1/2 transform -translate-y-1/2">熱田高校 デジタルホームカミング2025</h1>
+        <h1 class="text-2xl text-white font-bold absolute left-[4%] top-1/2 transform -translate-y-1/2">熱田高校 デジタルホームカミングデー2025</h1>
         <aside class="flex items-center gap-4 absolute right-[2%] top-1/2 transform -translate-y-1/2">
             <div class="btn-wrap" id="btn1">
                 <a class="btn btn-switch"><span>全画面</span></a>
