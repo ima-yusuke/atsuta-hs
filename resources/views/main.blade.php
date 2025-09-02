@@ -128,28 +128,7 @@
         //再生する動画のインデックスを保存（closeBtnで使用するため）
         let idx = null;
 
-        function onYouTubeIframeAPIReady() {
-            const elements = document.querySelectorAll('.youtubePlayer');
-            elements.forEach((element) => {
-
-                let url = element.getAttribute('data-url');
-
-                const player = new YT.Player(element, {
-                    height: '360',
-                    width: '640',
-                    videoId: getYouTubeVideoId(url), // 動画 ID を取得
-                    playerVars: {
-                        enablejsapi: 1,   // API を有効化
-                        controls: 1,      // コントロールバーを非表示にする
-                        rel: 0,           // 終了時に関連動画を表示しない
-                        fs:0              // フルスクリーンボタンを非表示にする
-                    }
-                });
-                playerArray.push({"player":player,"id":element.getAttribute('data-id')});
-            });
-
-        }
-
+        //サムネイル画像をクリックしたときに動画を再生する関数
         function playVideo(imgElement) {
 
             //youtube wrapperで動画とボタンを包む
@@ -159,33 +138,40 @@
             //閉じるボタン
             closeBtn = youtubeWrapper.lastElementChild;
 
-            // Youtube動画wrapperを表示（動画再生は下記forループで行う）
+            //Youtube動画wrapperを表示（動画再生は下記forループで行う）
             showVideoWrapper(imgElement)
 
-            // フルスクリーンにして、再生する処理
-            for (let i = 0; i < playerArray.length; i++) {
-                if (playerArray[i]["player"].options.videoId === getYouTubeVideoId(youtubePlayer.getAttribute('data-url')) &&
-                    playerArray[i]["id"] === youtubePlayer.getAttribute('data-id')) {
+            let url =youtubePlayer.getAttribute('data-url');
 
-                    // フルスクリーンにする
-                    if (youtubeWrapper.requestFullscreen) {
-                        youtubeWrapper.requestFullscreen().then(() => {
-                            // フルスクリーンに成功したら、iframeも100%にする
-                            youtubePlayer.style.width = '100%';
-                            youtubePlayer.style.height = '100%';
-                        });
+            const player = new YT.Player(youtubePlayer, {
+                height: '360',
+                width: '640',
+                videoId: getYouTubeVideoId(url),
+                playerVars: {
+                    enablejsapi: 1,
+                    controls: 1,
+                    rel: 0,
+                    fs: 0
+                },
+                events: {
+                    onReady: function (event) {
+                        // プレイヤー準備完了後に再生
+                        event.target.playVideo();
+
+                        // フルスクリーン化（必要ならここで）
+                        if (youtubeWrapper.requestFullscreen) {
+                            youtubeWrapper.requestFullscreen().then(() => {
+                                youtubePlayer.style.width = '100%';
+                                youtubePlayer.style.height = '100vh'; // ←ここを100%からvh指定にしてもOK
+                            });
+                        }
                     }
-
-                    idx = i;
-
-                    // 動画を再生
-                    playerArray[i]["player"].playVideo();
                 }
-            }
+            });
 
             // 閉じるボタンのクリックイベント
             closeBtn.addEventListener('click', function() {
-                resetVideo(imgElement)
+                resetVideo(imgElement,player)
 
                 // 前回のフルスクリーンが解除されていない状態で再度requestFullscreen()をするとブラウザは動かないため
                 // フルスクリーンを解除
@@ -197,12 +183,12 @@
             // フルスクリーンが解除されたときの処理（YouTubeで見るを押したとき自動でフルスクリーン解除なる）
             document.addEventListener('fullscreenchange', function() {
                 if (!document.fullscreenElement) {
-                    resetVideo(imgElement)
+                    resetVideo(imgElement,player)
                 }
             });
         }
 
-        // 動画wrapperを表示する関数（再生はここではしない）
+        //動画wrapperを表示する関数（再生はここではしない）
         function showVideoWrapper(imgElement){
             youtubeWrapper.style.display = 'block';
             youtubePlayer.style.display = 'block';
@@ -210,12 +196,12 @@
             imgElement.style.display = 'none';//サムネ画像非表示
         }
 
-        // 動画を停止し、サムネ画像を表示する関数
-        function resetVideo(imgElement){
+        //動画を停止し、サムネ画像を表示する関数
+        function resetVideo(imgElement,player){
             // 動画を停止
-            playerArray[idx]["player"].pauseVideo();
+            player.pauseVideo();
             // 動画を最初の0秒
-            playerArray[idx]["player"].seekTo(0, true);
+            player.seekTo(0, true);
 
             youtubeWrapper.style.display = 'none';
             imgElement.style.display = 'block';
@@ -229,8 +215,6 @@
             const match = url.match(regex);
             return match ? match[1] : null;
         }
-
-        console.log(@json($categories));
 
     </script>
     {{--    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/preset-links@3/tsparticles.preset.links.bundle.min.js"></script>--}}

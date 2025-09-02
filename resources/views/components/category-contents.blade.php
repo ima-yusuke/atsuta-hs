@@ -45,7 +45,7 @@
         <div class="youtubeWrapper relative w-full h-auto" style="display: none;">
 
             <!-- YouTube Player -->
-            <div class="youtubePlayer w-full h-auto" data-id="{{$content["id"]}}" data-url="{{$content['url']}}"></div>
+            <div class="youtubePlayer w-full h-full" data-id="{{$content["id"]}}" data-url="{{$content['url']}}"></div>
 
             <!-- 重ねるボタン -->
             <button
