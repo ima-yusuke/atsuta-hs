@@ -24,21 +24,21 @@
 </head>
 
 <body class="flex justify-center items-center disable-click">
-{{--    <div id="loadingScreen" style="--}}
-{{--    position: fixed;--}}
-{{--    top: 0; left: 0; right: 0; bottom: 0;--}}
-{{--    background: white;--}}
-{{--    z-index: 9999;--}}
-{{--    display: flex;--}}
-{{--    flex-direction: column;--}}
-{{--    justify-content: center;--}}
-{{--    align-items: center;--}}
-{{--    row-gap: 2em;--}}
-{{--    transition: opacity 0.5s ease;--}}
-{{--    ">--}}
-{{--        <div class="spinner"></div>--}}
-{{--        <p id="loading_text" class="text-gray-800">Loading...</p>--}}
-{{--    </div>--}}
+    <div id="loadingScreen" style="
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: white;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 2em;
+    transition: opacity 0.5s ease;
+    ">
+        <div class="spinner"></div>
+        <p id="loading_text" class="text-gray-800">Loading...</p>
+    </div>
 
     <div class="w-full h-full absolute" style="background-image: url({{asset("storage/img/bg-img.jpeg")}}); background-size: cover; background-position: bottom;"></div>
 
