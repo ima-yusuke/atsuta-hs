@@ -142,13 +142,6 @@ for (let i = 0; i < CategorySlide.length; i++) {
 
             ShowNextView(currentParentId); // 次のビューを表示
 
-            // スライドの数が6以上の場合、スライドできますのテキストを表示
-            let currentContents = document.getElementsByClassName("parent_id_" + currentParentId);
-            let contentsLength = currentContents.length;
-
-            if(contentsLength >6) {
-                slideText.classList.remove("opacity-0");
-            }
         }
     });
 }
