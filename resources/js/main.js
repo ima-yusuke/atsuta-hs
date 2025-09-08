@@ -149,15 +149,16 @@ for (let i = 0; i < CategorySlide.length; i++) {
             if(contentsLength >6) {
                 slideText.classList.remove("opacity-0");
             }
-
-            // スライドできますの→をクリックしたとき、横にスライド
-            slideText.addEventListener('click', function () {
-                contentSwiper.slideNext();  // 次のスライドへ
-            });
-
         }
     });
 }
+
+// スライドできますの→をクリックしたとき、横にスライド
+slideText.addEventListener('click', function () {
+    if (contentSwiper && !contentSwiper.destroyed) {
+        contentSwiper.slideNext();
+    }
+});
 
 // TOPボタンをクリック時の処理
 TopBtn.addEventListener("click", async function () {
