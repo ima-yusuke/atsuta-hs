@@ -165,6 +165,15 @@
                                 youtubePlayer.style.height = '100vh'; // ←ここを100%からvh指定にしてもOK
                             });
                         }
+                    },
+                    onStateChange: function (event) {
+                        // 動画終了時
+                        if (event.data === YT.PlayerState.ENDED) {
+                            resetVideo(imgElement,player)
+                            if (document.fullscreenElement) {
+                                document.exitFullscreen();
+                            }
+                        }
                     }
                 }
             });
