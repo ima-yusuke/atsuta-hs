@@ -57,10 +57,12 @@ function initializeContentSwiper(className) {
         // .swiperを横にスライドしたとき（slideChange イベント発火）
         on: {
             slideChange: function () {
-                if (slideText && !slideText.classList.contains('opacity-0')) {
-                    slideText.classList.add('opacity-0'); // フェードアウト
+                // SwiperにはisEndプロパティがあり、まだ右にスライドできるなら表示、できないなら非表示
+                if (!contentSwiper.isEnd)  {
+                    slideText.classList.remove("opacity-0");
+                } else {
+                    slideText.classList.add("opacity-0");
                 }
-
             }
         },
     });
