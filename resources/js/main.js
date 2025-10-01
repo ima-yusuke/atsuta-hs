@@ -35,8 +35,24 @@ const categorySwiper = new Swiper('.categorySwiper', {
     loop: true,          // スライドをループさせます。最後のスライドまで到達したら最初のスライドに戻ります。
     spaceBetween: 40,    // スライド間のスペースをピクセル単位で指定します。この場合は「30ピクセル」のスペースが設定されます。
     watchSlidesProgress: true,
+    centeredSlidesBounds: true,    // 端がはみ出て2枚判定になるのを防ぐ
 });
 
+// 左右のスライドを傾ける見た目を作る
+function UpdateMenuSlideStyle(){
+    for (let i = 0; i < CategorySlide.length; i++) {
+        CategorySlide[i].style.backgroundColor = 'white'; // すべてのメニュースライドの背景色を赤に設定
+        CategorySlide[i].style.transform = 'perspective(1000px) rotateY(0deg) scale(1)'; // すべてのメニュースライドのtransformをリセット
+    }
+    let leftMenuSlide = document.querySelector('.swiper-slide-active');//左のスライド
+    let rightMenuSlide = leftMenuSlide.nextElementSibling.nextElementSibling;//右のスライド
+    leftMenuSlide.style.transformOrigin = 'right center';
+    leftMenuSlide.style.transform = 'perspective(1000px) rotateY(16deg) scale(0.9)';
+    rightMenuSlide.style.transformOrigin = 'left center';
+    rightMenuSlide.style.transform = 'perspective(1000px) rotateY(-16deg) scale(0.9)';
+}
+
+UpdateMenuSlideStyle();
 
 // サブカテゴリーとコンテンツSwiperの初期化を関数化
 function initializeContentSwiper(className) {
@@ -80,15 +96,16 @@ function MoveSlideToCenter(clickedIdx) {
         let activeIndex = activeIndexArray.indexOf(clickedIdx);
         if(activeIndex===0){
             categorySwiper.slidePrev();
+            UpdateMenuSlideStyle();
             return false;
         }else if(activeIndex===2){
             categorySwiper.slideNext();
+            UpdateMenuSlideStyle();
             return false;
         }
     }else{
         return true;
     }
-
 }
 
 // メニューのカテゴリースライドをクリックしたときの処理
