@@ -7,13 +7,6 @@
     padding:2% !important;
 }
 
-.contentSwiper .swiper-slide {
-    text-align: center;
-    font-size: 18px;
-    background: #31313B;
-    /*width: 25% !important;*/
-}
-
 /*main.jsで使用*/
 .hideContainer{
     display: none !important;
@@ -22,3 +15,4 @@
 .thumbnail {
     aspect-ratio: 16 / 9 !important; /* 16:9 の比率を指定 */
 }
+

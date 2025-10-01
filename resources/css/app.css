@@ -1,4 +1,5 @@
 @import "bootstrap-icons/font/bootstrap-icons.css";
+/*@import "flowbite";*/
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -123,7 +124,34 @@ a.btn-switch2:hover span {
 
 /* 画像にアニメーションを適用するクラス */
 .btn-fade-out {
-    animation: btnFadeOut 1.5s ease-out forwards; /* 1.5秒で拡大・フェードアウト */
+    animation: btnFadeOut 1s ease-out forwards; /* 1.5秒で拡大・フェードアウト */
 }
 
+/*横にスライド出来るよう明示するための矢印*/
+@keyframes floatY {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(-30px);
+    }
+}
 
+.float-y {
+    animation: floatY 1.5s ease-in-out infinite;
+}
+
+/*最初のloadingのアニメーション*/
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

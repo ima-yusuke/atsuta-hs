@@ -3,6 +3,7 @@
         <p class="w-11/12 lg:w-10/12 text-2xl font-bold md:mt-20 mt-8 text-start">カテゴリー追加</p>
         <!-- カテゴリー一覧表示 -->
         <div id="category-list" class="flex flex-col w-11/12 lg:w-10/12 mt-8">
+            {{--更新処理表示--}}
             @if (session('success'))
                 <div id="success-alert" class="alert-area bg-green-100 border border-green-400 text-green-700 px-10 py-3 mb-4 rounded relative" role="alert">
                     <strong class="font-bold">{{ session('success') }}</strong>
@@ -25,15 +26,16 @@
                     </span>
                 </div>
             @endif
+            {{--一覧表示--}}
             <div id="sortable-category-list">
                 @foreach ($categories as $category)
                     <div id="{{ $category->id }}" class="sortable-item">
                         <button class="categories flex w-full text-left mb-2 px-10 py-6 font-bold text-xl bg-white hover:bg-gray-200" data-category-id="{{ $category->id }}">
                             <span class="w-full">{{ $category->name }}</span>
-                            <i class="bi bi-chevron-up hidden text-2xl md:me-10 self-center"></i>
-                            <i class="bi bi-chevron-down text-2xl md:me-10 self-center"></i>
+                            <i class="bi bi-chevron-up opened hidden text-2xl md:me-10 self-center"></i>
+                            <i class="bi bi-chevron-down closed text-2xl md:me-10 self-center"></i>
                         </button>
-                        <div class="hidden md:px-10 md:py-3 px-2 py-1 bg-white border-t border-solid flex-col @if ($errors->getBag('update' . $category->id)->has('name_' . $category->id) || $errors->getBag('update' . $category->id)->has('img')) has-error @endif">
+                        <div class="category-detail hidden md:px-10 md:py-3 px-2 py-1 bg-white border-t border-solid flex-col @if ($errors->getBag('update' . $category->id)->has('name_' . $category->id) || $errors->getBag('update' . $category->id)->has('img')) has-error @endif">
                             @if ($errors->getBag('update' . $category->id)->has('name_' . $category->id) || $errors->getBag('update' . $category->id)->has('img'))
                                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 my-4 rounded relative">
                                     <strong class="font-bold">入力された内容にエラーがあります。</strong>
@@ -111,8 +113,17 @@
                     <div class="flex flex-col w-full mt-12">
                         <p class="max-md:hidden bg-red-500 w-14 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</p>
                         <div class="flex flex-col md:flex-row items-center mt-1">
-                            <label for="img" class="w-48 pe-2 text-gray-900 text-nowrap"><span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>新規カテゴリー画像：</label>
-                            <input type="file" name="img" id="img" class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500">
+                            <label for="img_new" class="w-48 pe-2 text-gray-900 text-nowrap">
+                                <span class="md:hidden bg-red-500 w-14 my-auto me-2 px-2 py-[2px] text-xs text-white text-nowrap text-center rounded-xl">必須</span>
+                                新規カテゴリー画像：
+                            </label>
+                            <input type="file" name="img" id="img_new"
+                                   class="lg:w-96 md:w-72 w-10/12 max-md:mt-3 bg-gray-50 border border-gray-300 max-lg:text-sm max-md:text-xs text-gray-900 rounded-xl focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        {{-- 新規カテゴリーの選択した画像 --}}
+                        <div id="preview-container_new" class="flex-col max-md:items-center w-full mt-3 hidden">
+                            <label class="text-gray-900 text-nowrap">選択した画像：</label>
+                            <img id="preview_new" src="" alt="選択した画像" class="w-60" />
                         </div>
                         @error('img', 'add')
                         <p class="text-red-500 text-sm mt-2 max-md:text-center">※{{ $message }}</p>

@@ -2,17 +2,6 @@
     padding: 2% !important;
 }
 
-.category-slide {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-    text-align: center !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* 立体感のある影 */
-    transition: transform 0.2s, box-shadow 0.2s; /* ホバー時のアニメーション */
-    background-color: #E9E9E9;
-}
-
 /*メニュー画像*/
 .categorySwiper .swiper-slide img {
     width: 100% !important;

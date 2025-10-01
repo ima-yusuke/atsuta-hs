@@ -10,7 +10,7 @@ Route::get('/', [MainController::class, 'ShowPage'])->name('show.page');
 
 // ダッシュボード
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect()->route('ShowContent');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -19,19 +19,25 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // カテゴリー
-    Route::get("/dashboard/category",[AdminController::class,"ShowCategory"])->name("ShowCategory");
+//    Route::get("/dashboard/category",[AdminController::class,"ShowCategory"])->name("ShowCategory");
+//    Route::post("/dashboard/category",[AdminController::class,"AddCategory"])->name("AddCategory");
+//    Route::post('/dashboard/category/{id}', [AdminController::class,"UpdateCategory"])->name('UpdateCategory');
+//    Route::delete("/dashboard/category/{id}",[AdminController::class,"DeleteCategory"])->name("DeleteCategory");
+
+    // コンテンツ
+    Route::get("/dashboard/content",[AdminController::class,"ShowContent"])->name("ShowContent");
     Route::post("/dashboard/category",[AdminController::class,"AddCategory"])->name("AddCategory");
     Route::post('/dashboard/category/{id}', [AdminController::class,"UpdateCategory"])->name('UpdateCategory');
     Route::post("/dashboard/update-category-order",[AdminController::class,"UpdateCategoryOrder"])->name("UpdateCategoryOrder");
     Route::delete("/dashboard/category/{id}",[AdminController::class,"DeleteCategory"])->name("DeleteCategory");
-
-    // コンテンツ
-    Route::get("/dashboard/content",[AdminController::class,"ShowContent"])->name("ShowContent");
     Route::post("/dashboard/content",[AdminController::class,"AddContent"])->name("AddContent");
     Route::post('/dashboard/content/{id}', [AdminController::class,"UpdateContent"])->name('UpdateContent');
     Route::post("dashboard/update-content-order",[AdminController::class,"UpdateContentOrder"])->name("UpdateContentOrder");
     Route::delete("/dashboard/content/{id}",[AdminController::class,"DeleteContent"])->name("DeleteContent");
 
+    // 並び替え
+//    Route::get("/dashboard/sort",[AdminController::class,"ShowSort"])->name("ShowSort");
+//    Route::post('/dashboard/update-order', [AdminController::class, 'UpdateOrder'])->name('UpdateOrder');
 });
 
 require __DIR__.'/auth.php';

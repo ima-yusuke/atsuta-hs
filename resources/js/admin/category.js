@@ -3,15 +3,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // アコーディオンの切り替え
     document.querySelectorAll('#sortable-category-list > .sortable-item > .categories').forEach(button => {
         button.addEventListener('click', () => {
-            const icons = button.querySelectorAll('i');
-            icons.forEach(icon => {
-                icon.classList.toggle('hidden');
-            });
-            button.classList.toggle('mb-2');
+            const opened = button.querySelector('.opened');
+            const closed = button.querySelector('.closed');
             const details = button.nextElementSibling;
-            details.classList.toggle('mb-2');
-            details.classList.toggle('hidden');
-            details.classList.toggle('flex');
+            const isClose = details.classList.contains('hidden');
+            opened.classList.toggle('hidden', !isClose);
+            closed.classList.toggle('hidden', isClose);
+            button.classList.toggle('mb-2', !isClose);
+            details.classList.toggle('mb-2', isClose);
+            details.classList.toggle('hidden', !isClose);
+            details.classList.toggle('flex', isClose);
         });
     });
 
@@ -70,7 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // すべての input[type="file"] にイベントリスナーを設定
     document.querySelectorAll('input[type="file"]').forEach(input => {
         input.addEventListener('change', function (event) {
-            const id = input.getAttribute("id").replace("img_", ""); // idからcategoryのIDを取得
+            let id = input.getAttribute("id").replace("img_", ""); // idからcategoryのIDを取得
+            if (input.id === "img_new") {
+                id = "new"; // 新規カテゴリーの場合
+            }
             previewImage(event, id);
         });
     });
@@ -84,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
         onSort: onSortEvent
     });
 });
-
 
 function onSortEvent(e) {
     UpdateOrder(e.target, "sortable-item", '/dashboard/update-category-order');

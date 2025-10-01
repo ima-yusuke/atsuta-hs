@@ -5,6 +5,9 @@
         "dev": "vite",
         "build": "vite build"
     },
+    "engines": {
+        "node": "<=16.20.2"
+    },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",
         "alpinejs": "^3.4.2",
@@ -17,7 +20,7 @@
     },
     "dependencies": {
         "bootstrap-icons": "^1.11.3",
-        "flowbite": "^3.1.2",
+        "flowbite": "2.5.2",
         "sass": "^1.85.0",
         "sortablejs": "^1.15.6",
         "swiper": "^11.2.4"

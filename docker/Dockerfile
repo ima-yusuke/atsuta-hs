@@ -31,11 +31,11 @@ RUN curl -sS 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x14aa40ec08
     echo "deb [signed-by=/etc/apt/keyrings/ppa_ondrej_php.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu noble main" > /etc/apt/sources.list.d/ppa_ondrej_php.list
 RUN apt-get update && \
     apt-get install -y \
-    php8.1-cli php8.1-dev php8.1-pgsql php8.1-sqlite3 php8.1-gd php8.1-curl \
-    php8.1-mongodb php8.1-imap php8.1-mysql php8.1-mbstring php8.1-xml \
-    php8.1-zip php8.1-bcmath php8.1-soap php8.1-intl php8.1-readline \
-    php8.1-ldap php8.1-msgpack php8.1-igbinary php8.1-redis php8.1-memcached \
-    php8.1-pcov php8.1-imagick php8.1-xdebug php8.1-swoole
+    php8.3-cli php8.3-dev php8.3-pgsql php8.3-sqlite3 php8.3-gd php8.3-curl \
+    php8.3-mongodb php8.3-imap php8.3-mysql php8.3-mbstring php8.3-xml \
+    php8.3-zip php8.3-bcmath php8.3-soap php8.3-intl php8.3-readline \
+    php8.3-ldap php8.3-msgpack php8.3-igbinary php8.3-redis php8.3-memcached \
+    php8.3-pcov php8.3-imagick php8.3-xdebug php8.3-swoole
 RUN curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
@@ -57,7 +57,7 @@ RUN apt-get -y autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.1
+RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.3
 
 RUN userdel -r ubuntu
 RUN groupadd --force -g $WWWGROUP sail
@@ -65,7 +65,7 @@ RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 
 COPY start-container /usr/local/bin/start-container
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY php.ini /etc/php/8.1/cli/conf.d/99-sail.ini
+COPY php.ini /etc/php/8.3/cli/conf.d/99-sail.ini
 RUN chmod +x /usr/local/bin/start-container
 
 EXPOSE 80/tcp
