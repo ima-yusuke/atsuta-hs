@@ -29,18 +29,12 @@ let subCategoryIdArray = [];
 
 // 親カテゴリースライドのSwiper
 const categorySwiper = new Swiper('.categorySwiper', {
-    effect: 'coverflow', // スライダーに「カバーフロー」効果を適用します。中央のスライドが拡大され、3D的に表現されます。
     grabCursor: true,    // スライダー上でマウスカーソルが「掴む」形状になるように設定し、直感的なインターフェイスを提供します。
     centeredSlides: false, // スライダーを中央配置します。中央のスライドが常にビューポートの中央に表示されます。
     slidesPerView: 3,    // 画面上に同時に表示するスライドの数を指定します。この場合は「3枚」が表示されます。
     loop: true,          // スライドをループさせます。最後のスライドまで到達したら最初のスライドに戻ります。
-    coverflowEffect: {   // カバーフロー効果の詳細設定を行うオプションです。
-        rotate: 50,      // スライドの回転角度を設定します。値が大きいほどスライドが回転して立体感が増します。
-        stretch: -30,      // スライド同士の間隔を制御します。正の値でスライド間が広がり、負の値で縮まります。
-        depth: 100,      // 立体的な効果を強調するための奥行き（Z軸）を設定します。値が大きいほど深い効果が出ます。
-        modifier: 1,     // 効果の強さを調整します。数値を大きくするほど効果が強調されます。
-        slideShadows: true, // 各スライドに影を追加し、立体感を演出します。
-    },
+    spaceBetween: 40,    // スライド間のスペースをピクセル単位で指定します。この場合は「30ピクセル」のスペースが設定されます。
+    watchSlidesProgress: true,
 });
 
 
@@ -106,7 +100,7 @@ for (let i = 0; i < CategorySlide.length; i++) {
         // クリックされたスライドのidを取得
         currentParentId = e.currentTarget.id
 
-        // if(MoveSlideToCenter(slideIdx)){
+        if(MoveSlideToCenter(slideIdx)){
             // クリックされたスライドのサイズと位置を取得
             const slideImage = e.currentTarget.querySelector("img");
             const slideRect = slideImage.getBoundingClientRect();
@@ -142,7 +136,7 @@ for (let i = 0; i < CategorySlide.length; i++) {
 
             ShowNextView(currentParentId); // 次のビューを表示
 
-        // }
+        }
     });
 }
 
