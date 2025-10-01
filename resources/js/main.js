@@ -106,7 +106,7 @@ for (let i = 0; i < CategorySlide.length; i++) {
         // クリックされたスライドのidを取得
         currentParentId = e.currentTarget.id
 
-        if(MoveSlideToCenter(slideIdx)){
+        // if(MoveSlideToCenter(slideIdx)){
             // クリックされたスライドのサイズと位置を取得
             const slideImage = e.currentTarget.querySelector("img");
             const slideRect = slideImage.getBoundingClientRect();
@@ -142,7 +142,7 @@ for (let i = 0; i < CategorySlide.length; i++) {
 
             ShowNextView(currentParentId); // 次のビューを表示
 
-        }
+        // }
     });
 }
 
