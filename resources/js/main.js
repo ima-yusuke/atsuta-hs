@@ -52,6 +52,16 @@ function UpdateMenuSlideStyle(){
     rightMenuSlide.style.transform = 'perspective(1000px) rotateY(-16deg) scale(0.9)';
 }
 
+// スライドが切り替わった瞬間（インデックスが変わったら発火）
+categorySwiper.on('slideChange', (sw) => {
+    UpdateMenuSlideStyle();
+});
+
+// アニメーション完了後に一度だけ（UI確定タイミングで実行したい時）
+categorySwiper.on('slideChangeTransitionEnd', (sw) => {
+    UpdateMenuSlideStyle();
+});
+
 UpdateMenuSlideStyle();
 
 // サブカテゴリーとコンテンツSwiperの初期化を関数化
